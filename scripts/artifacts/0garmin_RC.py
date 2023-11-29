@@ -52,4 +52,4 @@ def get_appleWifiPlist(files_found, report_folder, seeker, wrap_text, timezone_o
                 #known_files.append(file_found)
                 #for known_network in deserialized['List of known networks']:
                     #ssid = ''
-    )
+    
