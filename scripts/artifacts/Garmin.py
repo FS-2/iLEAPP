@@ -38,13 +38,9 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
         with open(file_found, "rb") as fp:
             contenu = plistlib.load(fp)
 
-            root = contenu['$top']['root']
-            objects = contenu['$objects']
-            date_key = objects[root]['dateKey']
-            value_key = objects[root]['valueKey']
-
-            date_value = objects[date_key]['NS.time']
-            real_time_calorie_data = objects[value_key]
+            active_calories = contenu['$objects'][contenu['$objects'][contenu['$objects'][contenu['$top']['root']]['valueKey']]['activeCaloriesKey']]['value']
+            total_calories = contenu['$objects'][contenu['$objects'][contenu['$objects'][contenu['$top']['root']]['valueKey']]['totalCaloriesKey']]['value']
+            date_value = contenu['$objects'][contenu['$objects'][contenu['$top']['root']]['dateKey']]['NS.time']
 
             epoch_offset = datetime(2001, 1, 1).timestamp()
             adjusted_timestamp = date_value + epoch_offset
@@ -55,11 +51,7 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
             date_formattee = date_object.strftime('%d.%m.%Y %H:%M:%S')
 
-            active_calories_key = real_time_calorie_data['activeCaloriesKey']
-            total_calories_key = real_time_calorie_data['totalCaloriesKey']
 
-            active_calories = objects[active_calories_key]
-            total_calories = objects[total_calories_key]
 
             data_list.append(('Date', date_formattee))
             data_list.append(('Active Calories', active_calories))
