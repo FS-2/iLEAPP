@@ -100,8 +100,7 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
             # Accès aux données spécifiques à RealTimeCalorieData
             active_calories_key = real_time_calorie_data['activeCaloriesKey']
             total_calories_key = real_time_calorie_data['totalCaloriesKey']
-            data_list.append("valeur", date_formatée)
-            data_list.append(total_calories_key)
+            
 
             # Obtention des valeurs associées aux clés des calories
             active_calories = objects[active_calories_key]
