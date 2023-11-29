@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/root/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),
         "function": "get_garmin"
     }
 }
@@ -51,10 +51,8 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
                     logdevinfo(f"Date: {val}")
                 else:
                     logfunc("clé 'dateKey' pas trouvée dans l'extraction")
-                    print("clé 'dateKey' pas trouvée dans l'extraction")
             else:
                 logfunc("clé 'CachedData<RealTimeCalorieData>' pas trouvée dans l'extraction")
-                print("clé 'CachedData<RealTimeCalorieData>' pas trouvée dans l'extraction")
 
 
     #génère le rapport HTML
@@ -75,5 +73,4 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
     tlactivity = 'Garmin'
     timeline(report_folder, tlactivity, data_list, data_headers)
 
-    print("possible de voir les print")
 
