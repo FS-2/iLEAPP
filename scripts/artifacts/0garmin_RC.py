@@ -12,18 +12,17 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/mobile/Library/Accounts/Accounts3.sqlite*'),      #peut avoir plusieurs paths car tuple
+        "paths": ('*/root/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),      #peut avoir plusieurs paths car tuple
         "function": "get_garmin"                                  #pas oublier étoile à la fin du path pour.wall et .db
     }
 }
 
-#TOUT EST A TITRE D'EXEMPLE CAR NOUS ON AURA DU JSON SURTOUT
 
-import sqlite3
-import json
+
+import plistlib
 
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, open_sqlite_db_readonly, convert_ts_human_to_utc, convert_utc_human_to_timezone
+from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
 
 #permet de parcourir la liste des fichiers qui ont été trouvés à partir de paths et,
 #dans le cas des bases de données SQLite, de bien sélectionner le fichier de la base de données
@@ -35,13 +34,22 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
         if file_found.endswith('/Accounts3.sqlite'):
             break
 
-#base de données est ouverte en lecture seule
-    db = open_sqlite_db_readonly(file_found)
-    cursor = db.cursor()
+def get_appleWifiPlist(files_found, report_folder, seeker, wrap_text, timezone_offset):
+    known_data_list = []
+    scanned_data_list = []
+    known_files = []
+    scanned_files = []
+    for file_found in files_found:
+        file_found = str(file_found)
 
-#La requête, écrite et testée dans le logiciel de visualisation des bases de données SQLite,
-# est ensuite insérée en l’état dans cursor.execute
-cursor.execute('''
-    select blalba requête sql
-'''
+        with open(file_found, 'rb') as f:
+            deserialized = plistlib.load(f)
+            if 'CachedData<RealTimeCalorieData>' in deserialized:
+                val = (deserialized['dateKey'])
+                logdevinfo(f"Keep Wifi Powered Airplane Mode: {val}")
+
+            #if 'List of known networks' in deserialized:
+                #known_files.append(file_found)
+                #for known_network in deserialized['List of known networks']:
+                    #ssid = ''
     )
