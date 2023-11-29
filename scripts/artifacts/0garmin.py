@@ -45,6 +45,7 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
                 if 'dateKey' in real_time_calorie_data:
                     # la valeur est la valeur correspondante à la dernière clé recherchée
                     val = real_time_calorie_data['dateKey']
+                    data_list.append(('Date', val))
                     # enregistre ces informations à l'aide des fonctions logfunc et logdevinfo (fonctions personnalisées pour iLEAPP)
                     # ça va enregistrer :  "texte_prédéfini": valeur
                     logfunc(f"Date: {val}")
