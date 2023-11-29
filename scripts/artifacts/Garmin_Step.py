@@ -4,7 +4,7 @@
 
 __artifacts_v2__ = {
     "Garmin_Connect": {
-        "name": "Garmin Connect",
+        "name": "Garmin Connect1",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "category": "Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeFloorsCacheDataKey'),
-        "function": "get_garmin"
+        "function": "get_garmin_step"
 
     }
 }
@@ -101,12 +101,12 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
         report.write_artifact_data_table(data_headers, liste, file_found)
 
         # génère le fichier TSV
-        tsvname = 'Garmin'
+        tsvname = 'Garmin_floors'
         tsv(report_folder, data_headers, liste, tsvname)
 
         # insérer les enregistrements horodatés dans la timeline
         # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-        tlactivity = 'Garmin'
+        tlactivity = 'Garmin_floors'
         timeline(report_folder, tlactivity, liste, data_headers)
 
         report.end_artifact_report()
