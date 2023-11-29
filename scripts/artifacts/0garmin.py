@@ -45,6 +45,7 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
                 if 'dateKey' in real_time_calorie_data:
                     # la valeur est la valeur correspondante à la dernière clé recherchée
                     val = real_time_calorie_data['dateKey']
+
                     data_list.append(('Date', val))
                     # enregistre ces informations à l'aide des fonctions logfunc et logdevinfo (fonctions personnalisées pour iLEAPP)
                     # ça va enregistrer :  "texte_prédéfini": valeur
@@ -63,7 +64,7 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
     report.add_script()
     data_headers = ('Key', 'Values')
     report.write_artifact_data_table(data_headers, data_list, file_found)
-    report.end_artifact_report()
+
 
     #génère le fichier TSV
     tsvname = 'Garmin'
@@ -74,4 +75,4 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
     tlactivity = 'Garmin'
     timeline(report_folder, tlactivity, data_list, data_headers)
 
-
+    report.end_artifact_report()
