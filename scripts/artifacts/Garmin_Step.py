@@ -3,7 +3,7 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect": {
+    "Garmin_Connect_2": {
         "name": "Garmin Connect1",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
