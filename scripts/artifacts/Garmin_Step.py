@@ -44,17 +44,17 @@ def get_garmin_step(files_found, report_folder, seeker, wrap_text, timezone_offs
         #ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
         #Le fichier est référencé par la variable fp dans le bloc suivant
 
-        with open(file_found, "rb") as fp:
+        with open(file_found, "rb") as file:
 
 
 
 
 
-            contenu = plistlib.load(fp)
+            contenue = plistlib.load(file)
             # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
-            print(contenu)
-            roo = contenu['$top']['root']
-            object = contenu['$objects']
+            print(contenue)
+            roo = contenue['$top']['root']
+            object = contenue['$objects']
 
             # Extraire la dateKey et la valueKey du noeud racine
             date_ke = object[roo]['dateKey']
@@ -93,12 +93,12 @@ def get_garmin_step(files_found, report_folder, seeker, wrap_text, timezone_offs
             liste.append(('Floors_descended', floors_descended))
 
 
-        report = ArtifactHtmlReport('Garmin_floors')
+        reports = ArtifactHtmlReport('Garmin_floors')
         # le report folder est définit dans l'interface graphique de iLEAPP
-        report.start_artifact_report(report_folder, 'Garmin_floors')
-        report.add_script()
-        data_headers = ('Key', 'Values')
-        report.write_artifact_data_table(data_headers, liste, file_found)
+        reports.start_artifact_report(report_folder, 'Garmin_floors')
+        reports.add_script()
+        data_headers = ('Keys', 'Value')
+        reports.write_artifact_data_table(data_headers, liste, file_found)
 
         # génère le fichier TSV
         tsvname = 'Garmin_floors'
@@ -109,4 +109,4 @@ def get_garmin_step(files_found, report_folder, seeker, wrap_text, timezone_offs
         tlactivity = 'Garmin_floors'
         timeline(report_folder, tlactivity, liste, data_headers)
 
-        report.end_artifact_report()
+        reports.end_artifact_report()
