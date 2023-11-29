@@ -59,11 +59,11 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
     report.end_artifact_report()
 
     #génère le fichier TSV
-    tsvname = 'Device Preferences Plist'
+    tsvname = 'Garmin'
     tsv(report_folder, data_headers, data_list, tsvname)
 
     #insérer les enregistrements horodatés dans la timeline
     #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'knowledgeC - Battery Percentage'
+    tlactivity = 'Garmin'
     timeline(report_folder, tlactivity, data_list, data_headers)
 
