@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),
+        "paths": ('*/root/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),
         "function": "get_garmin"
     }
 }
@@ -36,18 +36,24 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
         #ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
         #Le fichier est référencé par la variable fp dans le bloc suivant
         with open(file_found, "rb") as fp:
-            #charge le contenu du fichier ouvert (plist) et stocke le contenu dans la variable plist.
-            plist = plistlib.load(fp)
+            #charge le contenu du fichier ouvert (plist) et stocke le contenu dans la variable pl.
+            pl = plistlib.load(fp)
             # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
-            if 'CachedData<RealTimeCalorieData>' in plist:
-                #la valeur est la valeur correspondante à la seconde clé recherchée
-                val = (plist['dateKey'])
-                # enregistre ces informations à l'aide des fonctions logfunc et logdevinfo (fonctions personnalisées pour iLEAPP)
-                # ça va enregistrer :  "texte_prédéfini": valeur
-                logfunc(f"Date: {val}")
-                logdevinfo(f"Date: {val}")
+            if 'CachedData<RealTimeCalorieData>' in pl:
+                # accéder à la sous-clé 'dateKey' à l'intérieur de 'CachedData<RealTimeCalorieData>'
+                real_time_calorie_data = pl['CachedData<RealTimeCalorieData>']
+                if 'dateKey' in real_time_calorie_data:
+                    # la valeur est la valeur correspondante à la dernière clé recherchée
+                    val = real_time_calorie_data['dateKey']
+                    # enregistre ces informations à l'aide des fonctions logfunc et logdevinfo (fonctions personnalisées pour iLEAPP)
+                    # ça va enregistrer :  "texte_prédéfini": valeur
+                    logfunc(f"Date: {val}")
+                    logdevinfo(f"Date: {val}")
+                else:
+                    logfunc("clé 'dateKey' pas trouvée dans l'extraction")
             else:
-                logfunc("pas trouvé")
+                logfunc("clé 'CachedData<RealTimeCalorieData>' pas trouvée dans l'extraction")
+
 
     #génère le rapport HTML
     report = ArtifactHtmlReport('Garmin')
