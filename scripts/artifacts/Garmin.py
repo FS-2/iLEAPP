@@ -2,24 +2,6 @@
 # Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
 # Date: 05.12.2023
 
-__artifacts_v2__ = {
-    "Garmin_Connect": {
-        "name": "Garmin Connect",
-        "description": "Extract information of Garmin Connect application",
-        "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
-        "version": "1.0",
-        "date": "2023-12-05",
-        "requirements": "none",
-        "category": "Application",
-        "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),
-        "function": "get_garmin"
-    }
-}
-#peut avoir plusieurs paths car tuple
-
-
-
 
 # Module Description: Parses Garmin Connect details
 # Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
