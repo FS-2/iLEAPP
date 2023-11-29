@@ -36,7 +36,7 @@ from scripts.ilapfuncs import timeline
 
 def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
     #Cette liste sera utilisée pour stocker les données extraites
-    data_list = []
+    liste = []
     #pour chaque élément de la liste files_found, le code convertit l'élément en string
 
     for file_found in files_found:
@@ -53,29 +53,29 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
             contenu = plistlib.load(fp)
             # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
             print(contenu)
-            root = contenu['$top']['root']
-            objects = contenu['$objects']
+            roo = contenu['$top']['root']
+            object = contenu['$objects']
 
             # Extraire la dateKey et la valueKey du noeud racine
-            date_key = objects[root]['dateKey']
-            value_key = objects[root]['valueKey']
+            date_ke = object[roo]['dateKey']
+            value_ke = object[roo]['valueKey']
 
             # Obtention de la valeur associée à dateKey
-            date_value = objects[date_key]['NS.time']
+            date_valu = object[date_ke]['NS.time']
 
             # Obtention des informations sur les étages
-            floors_data = objects[value_key]
+            floors_dat = object[value_ke]
 
             # Extraire les clés pour les étages descendus et montés
-            floors_descended_key = floors_data['floorsDescendedKey']
-            floors_climbed_key = floors_data['floorsClimbedKey']
+            floors_descended_key = floors_dat['floorsDescendedKey']
+            floors_climbed_key = floors_dat['floorsClimbedKey']
 
             # Obtention des valeurs associées aux clés des étages
-            floors_descended = objects[floors_descended_key]
-            floors_climbed = objects[floors_climbed_key]
+            floors_descended = object[floors_descended_key]
+            floors_climbed = object[floors_climbed_key]
 
             epoch_offset = datetime(2001, 1, 1).timestamp()
-            adjusted_timestamp = date_value + epoch_offset
+            adjusted_timestamp = date_valu + epoch_offset
 
             # Convertir le timestamp en objet datetime
             date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
@@ -83,14 +83,14 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
             # Appliquer le fuseau horaire (par exemple, UTC+1)
             fuseau_horaire = pytz.timezone('Europe/Paris')  # Remplacez 'Europe/Paris' par votre fuseau horaire
             fuseau_horaire = pytz.timezone('Europe/Paris')
-            date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
+            date_objec = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
 
             # Formater la date au format demandé
-            date_formattee = date_object.strftime('%d.%m.%Y %H:%M:%S')
+            date_formatte = date_objec.strftime('%d.%m.%Y %H:%M:%S')
 
-            data_list.append(('Date', date_formattee))
-            data_list.append(('Floors_climbed', floors_climbed))
-            data_list.append(('Floors_descended', floors_descended))
+            liste.append(('Date', date_formatte))
+            liste.append(('Floors_climbed', floors_climbed))
+            liste.append(('Floors_descended', floors_descended))
 
 
         report = ArtifactHtmlReport('Garmin_floors')
@@ -98,15 +98,15 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
         report.start_artifact_report(report_folder, 'Garmin_floors')
         report.add_script()
         data_headers = ('Key', 'Values')
-        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.write_artifact_data_table(data_headers, liste, file_found)
 
         # génère le fichier TSV
         tsvname = 'Garmin'
-        tsv(report_folder, data_headers, data_list, tsvname)
+        tsv(report_folder, data_headers, liste, tsvname)
 
         # insérer les enregistrements horodatés dans la timeline
         # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
         tlactivity = 'Garmin'
-        timeline(report_folder, tlactivity, data_list, data_headers)
+        timeline(report_folder, tlactivity, liste, data_headers)
 
         report.end_artifact_report()
