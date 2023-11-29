@@ -23,6 +23,8 @@ import plistlib
 
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
+import pytz
+from datetime import datetime
 
 #on définit la fonction get_garmin
 #paramètres sont utilisés pour traiter des fichiers, générer des rapports,
@@ -37,27 +39,41 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
         #Le fichier est référencé par la variable fp dans le bloc suivant
         with open(file_found, "rb") as fp:
             #charge le contenu du fichier ouvert (plist) et stocke le contenu dans la variable pl.
-            pl = plistlib.load(fp)
+            contenu = plistlib.load(fp)
             # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
-            if 'CachedData<RealTimeCalorieData>' in pl:
-                # accéder à la sous-clé 'dateKey' à l'intérieur de 'CachedData<RealTimeCalorieData>'
-                real_time_calorie_data = pl['CachedData<RealTimeCalorieData>']
-                if 'dateKey' in real_time_calorie_data:
-                    # la valeur est la valeur correspondante à la dernière clé recherchée
-                    val = real_time_calorie_data['dateKey']
-                    print(val)
+            root = contenu['$top']['root']
+            objects = contenu['$objects']
+            date_key = objects[root]['dateKey']
+            value_key = objects[root]['valueKey']
 
-                    data_list.append(('Date', val))
-                    # enregistre ces informations à l'aide des fonctions logfunc et logdevinfo (fonctions personnalisées pour iLEAPP)
-                    # ça va enregistrer :  "texte_prédéfini": valeur
-                    logfunc(f"Date: {val}")
-                    logdevinfo(f"Date: {val}")
-                else:
-                    logfunc("clé 'dateKey' pas trouvée dans l'extraction")
-            else:
-                logfunc("clé 'CachedData<RealTimeCalorieData>' pas trouvée dans l'extraction")
+            # Obtention des valeurs associées aux clés
+            date_value = objects[date_key]['NS.time']
+            real_time_calorie_data = objects[value_key]
 
-    print(data_list)
+            # Ajouter l'offset pour le 1er janvier 2001
+            epoch_offset = datetime(2001, 1, 1).timestamp()
+            adjusted_timestamp = date_value + epoch_offset
+
+            # Convertir le timestamp en objet datetime
+            date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
+
+            # Appliquer le fuseau horaire (par exemple, UTC+1)
+            fuseau_horaire = pytz.timezone('Europe/Paris')  # Remplacez 'Europe/Paris' par votre fuseau horaire
+            date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
+
+            # Formater la date au format demandé
+
+            date_formatée = date_object.strftime('%d.%m.%Y %H:%M:%S')
+
+            # Accès aux données spécifiques à RealTimeCalorieData
+            active_calories_key = real_time_calorie_data['activeCaloriesKey']
+            total_calories_key = real_time_calorie_data['totalCaloriesKey']
+            data_list.append("valeur", date_formatée)
+            data_list.append(total_calories_key)
+
+            # Obtention des valeurs associées aux clés des calories
+            active_calories = objects[active_calories_key]
+            total_calories = objects[total_calories_key]
     #génère le rapport HTML
     report = ArtifactHtmlReport('Garmin')
     #le report folder est définit dans l'interface graphique de iLEAPP
