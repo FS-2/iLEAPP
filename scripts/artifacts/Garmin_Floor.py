@@ -39,19 +39,19 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
 
                 # Recherche des valeurs avec les clés associées
                 root = contenu['$top']['root']
-                object = contenu['$objects']
+                objects = contenu['$objects']
 
                 # Valeurs associées aux étages
-                value_key = object[root]['valueKey']
-                floors_data = object[value_key]
+                value_key = objects[root]['valueKey']
+                floors_data = objects[value_key]
                 floors_descended_key = floors_data['floorsDescendedKey']
                 floors_climbed_key = floors_data['floorsClimbedKey']
-                floors_descended = object[floors_descended_key]
-                floors_climbed = object[floors_climbed_key]
+                floors_descended = objects[floors_descended_key]
+                floors_climbed = objects[floors_climbed_key]
 
                 # Valeurs associées à la date
-                date_key = object[root]['dateKey']
-                date_value = object[date_key]['NS.time']
+                date_key = objects[root]['dateKey']
+                date_value = objects[date_key]['NS.time']
 
                 # Conversion du format de la date
                 epoch_offset = datetime(2001, 1, 1).timestamp()
@@ -59,10 +59,10 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
                 fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
                 date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
-                date_formatte = date_object.strftime('%d.%m.%Y %H:%M:%S')
+                date_formate = date_object.strftime('%d.%m.%Y %H:%M:%S')
 
                 # Ajout des valeurs à la data_list du rapport
-                data_list.append(('Date', date_formatte))
+                data_list.append(('Date', date_formate))
                 data_list.append(('Floors_climbed', floors_climbed))
                 data_list.append(('Floors_descended', floors_descended))
                 logdevinfo(f"floors_climbed: {floors_climbed}")
