@@ -14,8 +14,10 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%*'),
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%2Ec2678cb2-9b3b-4cc3-b019-8c43e49ba685'),
         "function": "get_garmin_activite"
+
+
 
     }
 }
