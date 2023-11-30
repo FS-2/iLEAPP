@@ -85,14 +85,14 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 vo2_max_running = biometric_profile['vo2MaxRunning']  # 0.0
                 weight = weight/1000
 
-
-
-
                 last_device = value_key['lastUsedDevice']
                 lastDeviceUsed = last_device['lastUsedDeviceName']
                 userID = last_device['userProfileNumber']
+
+                date_convert = convert_ts_human_to_utc(date)
+                date_convert = convert_utc_human_to_timezone(date_convert,timezone_offset)
                 utilisateur1 = {
-                    "Date": date,
+                    "Date": date_convert,
                     "Genre": gender,
                     "Poids": weight,
                     "Taille": height,
@@ -107,7 +107,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     # le report folder est définit dans l'interface graphique de iLEAPP
     reports.start_artifact_report(report_folder, 'Garmin_Profile')
     reports.add_script()
-    data_headers = ('Date', 'Genre', 'Poids', 'Taille', 'Age', 'DernierAppareilUtilisé', 'UserID')
+    data_headers = ('Date', 'Genre', 'Poids [Kg]', 'Taille', 'Age', 'DernierAppareilUtilisé', 'UserID')
 
     for user in utilisateur:
         reports.write_artifact_data_table(data_headers, [user.values()], file_found, write_total=False)
