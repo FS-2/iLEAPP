@@ -91,13 +91,13 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 lastDeviceUsed = last_device['lastUsedDeviceName']
                 userID = last_device['userProfileNumber']
 
-                liste.append("Date", date)
-                liste.append("Genre", gender)
-                liste.append("Poids", weight)
-                liste.append("Taille", height)
-                liste.append("Age", age)
-                liste.append("LastUsedDeviceName", lastDeviceUsed)
-                liste.append("userid", userID)
+                liste.append(('Date', date))
+                liste.append(('Genre', gender))
+                liste.append(("Poids", weight))
+                liste.append(("Taille", height))
+                liste.append(("Age", age))
+                liste.append(("LastUsedDeviceName", lastDeviceUsed))
+                liste.append(("userid", userID))
 
     reports = ArtifactHtmlReport('Garmin_Profile')
     # le report folder est définit dans l'interface graphique de iLEAPP
