@@ -56,21 +56,21 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
 
     #génère le rapport HTML
-    report = ArtifactHtmlReport('Garmin')
+    report = ArtifactHtmlReport('Garmin_Calories')
     #le report folder est définit dans l'interface graphique de iLEAPP
-    report.start_artifact_report(report_folder, 'Garmin')
+    report.start_artifact_report(report_folder, 'Garmin_Calories')
     report.add_script()
     data_headers = ('Key', 'Values')
     report.write_artifact_data_table(data_headers, data_list, file_found)
     report.end_artifact_report()
 
     #génère le fichier TSV
-    tsvname = 'Garmin'
+    tsvname = 'Garmin_Calories'
     tsv(report_folder, data_headers, data_list, tsvname)
 
     #insérer les enregistrements horodatés dans la timeline
     #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin'
+    tlactivity = 'Garmin_Calories'
     timeline(report_folder, tlactivity, data_list, data_headers)
 
 
