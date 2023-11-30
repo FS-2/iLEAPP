@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "category": "Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),
-        "function": "get_garmin"
+        "function": "get_garmin_calories"
     }
 }
             #peut avoir plusieurs paths car tuple
@@ -27,7 +27,7 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, c
 #on définit la fonction get_garmin
 #paramètres sont utilisés pour traiter des fichiers, générer des rapports,
 #rechercher des informations, gérer le formatage du texte et ajuster les décalages de fuseau horaire
-def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_offset):
     #Cette liste sera utilisée pour stocker les données extraites
     data_list = []
     #pour chaque élément de la liste files_found, le code convertit l'élément en string
