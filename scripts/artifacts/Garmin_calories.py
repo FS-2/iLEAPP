@@ -29,7 +29,7 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
     # Liste utilisée pour stocker les données extraites
     data_list = []
     # Conversion des éléments en string
-    file_found = str(files_found[0])
+    file_found = str(files_found)
 
     # Ouverture et chargement du fichier
     with open(file_found, "rb") as fp:
