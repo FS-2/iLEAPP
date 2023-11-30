@@ -61,8 +61,8 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
                     contenu = json.load(file)
 
                     # Recherche des valeurs avec les clés associées
-                    app_version = data['app_version']
-                    google_app_id = data['google_app_id']
+                    app_version = contenu['app_version']
+                    google_app_id = contenu['google_app_id']
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('App version', app_version))
