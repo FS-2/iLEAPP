@@ -33,7 +33,7 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
     data_list = []
     # Conversion des éléments en string
     for file_found in files_found:
-            file_found = str(file_found)
+        file_found = str(file_found)
 
         # Lire l'image et l'encoder en base64
         with open(file_found[0], "rb") as image_file:
