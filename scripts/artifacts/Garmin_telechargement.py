@@ -34,30 +34,33 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
     for file_found in files_found:
             file_found = str(file_found)
 
-            # Ouverture et chargement du fichier
-            with open(file_found[0], "rb") as file:
-                contenu = plistlib.load(file)
+            if files_found:
+                file_found = files_found[0]
 
-                # Recherche des valeurs avec les clés associées
-                apple_id = contenu['com.apple.iTunesStore.downloadInfo']['accountInfo']['AppleID']
-                purchaseDate = contenu['com.apple.iTunesStore.downloadInfo']['purchaseDate']
+                # Ouverture et chargement du fichier
+                with open(file_found, "rb") as file:
+                    contenu = plistlib.load(file)
 
-                # Formatage de la date
-                date_object = datetime.fromisoformat(purchaseDate)
-                date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
+                    # Recherche des valeurs avec les clés associées
+                    apple_id = contenu['com.apple.iTunesStore.downloadInfo']['accountInfo']['AppleID']
+                    purchaseDate = contenu['com.apple.iTunesStore.downloadInfo']['purchaseDate']
 
-                # Ajout des valeurs à la data_list du rapport
-                data_list.append(('Apple_id', apple_id))
-                data_list.append(('Date de téléchargement de l’application', date_formatee))
-                logdevinfo(f"'Apple_id': {apple_id}")
-                logdevinfo(f"'Date de téléchargement de l’application': {date_formatee}")
+                    # Formatage de la date
+                    date_object = datetime.fromisoformat(purchaseDate)
+                    date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
+
+                    # Ajout des valeurs à la data_list du rapport
+                    data_list.append(('Apple_id', apple_id))
+                    data_list.append(('Date de téléchargement de l’application', date_formatee))
+                    logdevinfo(f"'Apple_id': {apple_id}")
+                    logdevinfo(f"'Date de téléchargement de l’application': {date_formatee}")
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Telechargement')
     reports.start_artifact_report(report_folder, 'Garmin_Telechargement')
     reports.add_script()
     data_headers = ('Keys', 'Value')
-    reports.write_artifact_data_table(data_headers, data_list, file_found[0])
+    reports.write_artifact_data_table(data_headers, data_list, file_found)
     reports.end_artifact_report()
 
     # Génère le fichier TSV
