@@ -1,3 +1,4 @@
+
 # Module Description: Parses Garmin Connect details
 # Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
 # Date: 05.12.2023
@@ -12,7 +13,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/GarminPayImageCache/FitPayCardImage*'),
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/GarminPayWalletItemsCache'),
         "function": "get_garmin_pay"
 
     }
@@ -35,15 +36,27 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
     for file_found in files_found:
         file_found = str(file_found)
 
-        # Lire l'image et l'encoder en base64
-        with open(file_found, "rb") as image_file:
-            encoded_image = base64.b64encode(image_file.read()).decode()
-            # Générer le HTML pour afficher l'image encodée en base64
-            img_html = f'<img src="data:image/png;base64,{encoded_image}" alt="Garmin Pay Image" style="width:35%;height:auto;">'
 
-            # Ajout des valeurs à la data_list du rapport
-            data_list.append(('Image de la carte', img_html))
-            logdevinfo(f"'Image de la carte': {img_html}")
+        for item in file_found:
+            if isinstance(item, list):
+                for sub_item in item:
+                    if isinstance(sub_item, list):
+                        for json_str in sub_item:
+                            if isinstance(json_str, str):
+                                # Convertir la chaîne JSON en dictionnaire
+                                contenu = json.loads(json_str)
+
+
+                                # Recherche des valeurs avec les clés associées
+                                business_operator = contenu['businessOperator']
+                                card_number = contenu['cardNumber']
+                                card_title = contenu['cardTitle']
+
+                                # Ajout des valeurs à la data_list du rapport
+                                data_list.append(('business_operator', business_operator))
+                                data_list.append(('card_number', card_number))
+                                data_list.append(('card_title', card_title))
+                                logdevinfo(f"'business_operator': {business_operator}")
 
 
     # Génération du rapport
@@ -51,7 +64,7 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
     reports.start_artifact_report(report_folder, 'Garmin_Pay')
     reports.add_script()
     data_headers = ('Keys', 'Value')
-    reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+    reports.write_artifact_data_table(data_headers, data_list, file_found)
     reports.end_artifact_report()
 
     # Génère le fichier TSV
