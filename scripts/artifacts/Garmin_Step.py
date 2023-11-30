@@ -41,23 +41,16 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
 
     for file_found in files_found:
             file_found = str(file_found)
-        #ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
-        #Le fichier est référencé par la variable fp dans le bloc suivant
-
+            #ouverture et chargement du fichier
             with open(file_found, "rb") as file:
-
                 contenu = plistlib.load(file)
-                # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
 
                 root = contenu['$top']['root']
                 object = contenu['$objects']
 
-                # Extraire la dateKey et la valueKey du noeud racine
-                date_key = object[root]['dateKey']
                 value_key = object[root]['valueKey']
 
-                # Obtention de la valeur associée à dateKey
-                date_value = object[date_key]['NS.time']
+
 
                 # Obtention des informations sur les étages
                 floors_dat = object[value_key]
@@ -69,6 +62,9 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 # Obtention des valeurs associées aux clés des étages
                 floors_descended = object[floors_descended_key]
                 floors_climbed = object[floors_climbed_key]
+
+                date_key = object[root]['dateKey']
+                date_value = object[date_key]['NS.time']
 
                 epoch_offset = datetime(2001, 1, 1).timestamp()
                 adjusted_timestamp = date_value + epoch_offset
@@ -90,9 +86,8 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 logdevinfo(f"floors_descended: {floors_descended}")
 
 
-
+    #Génération du rapport
     reports = ArtifactHtmlReport('Garmin_floors')
-    # le report folder est définit dans l'interface graphique de iLEAPP
     reports.start_artifact_report(report_folder, 'Garmin_floors')
     reports.add_script()
     data_headers = ('Keys', 'Value')
