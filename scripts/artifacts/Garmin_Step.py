@@ -17,10 +17,6 @@ __artifacts_v2__ = {
 
     }
 }
-            #peut avoir plusieurs paths car tuple
-
-
-
 
 import plistlib
 from scripts.artifact_report import ArtifactHtmlReport
