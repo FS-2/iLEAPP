@@ -35,41 +35,15 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
     for file_found in files_found:
             file_found = str(file_found)
 
-            # Pour le premier fichier (PNG)
-            if file_found == files_found[0]:
                 # Lire l'image et l'encoder en base64
                 with open(file_found[0], "rb") as image_file:
                     encoded_image = base64.b64encode(image_file.read()).decode()
                     # Générer le HTML pour afficher l'image encodée en base64
                     img_html = f'<img src="data:image/png;base64,{encoded_image}" alt="Garmin Pay Image" style="width:35%;height:auto;">'
 
-
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Image de la carte', img_html))
                     logdevinfo(f"'Image de la carte': {img_html}")
-
-            # Pour le second fichier (json)
-            if file_found == files_found[1]:
-                for item in file_found:
-                    if isinstance(item, list):
-                        for sub_item in item:
-                            if isinstance(sub_item, list):
-                                for json_str in sub_item:
-                                    if isinstance(json_str, str):
-                                        # Convertir la chaîne JSON en dictionnaire
-                                        contenu = json.loads(json_str)
-
-
-                                        # Recherche des valeurs avec les clés associées
-                                        business_operator = contenu['businessOperator']
-                                        card_number = contenu['cardNumber']
-                                        card_title = contenu['cardTitle']
-
-                                        # Ajout des valeurs à la data_list du rapport
-                                        data_list.append(('business_operator', business_operator))
-                                        data_list.append(('card_number', card_number))
-                                        data_list.append(('card_title', card_title))
-                                        logdevinfo(f"'business_operator': {business_operator}")
 
 
     # Génération du rapport
