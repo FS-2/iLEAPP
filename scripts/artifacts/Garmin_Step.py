@@ -46,10 +46,6 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
 
             with open(file_found, "rb") as file:
 
-
-
-
-
                 contenue = plistlib.load(file)
                 # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
 
