@@ -50,7 +50,7 @@ def resolve_uids(item, objects):
 def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
     # pour chaque élément de la liste files_found, le code convertit l'élément en string
-    liste_tuples = []
+
     for file_found in files_found:
         file_found = str(file_found)
         # ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
@@ -67,7 +67,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
             value_key = root['valueKey']
 
             # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
-
+            liste_tuples = []
             for activite in value_key['NS.objects']:
                 dict_activite = {}
                 for cle in ['activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR', 'ownerId',
