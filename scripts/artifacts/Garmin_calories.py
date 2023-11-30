@@ -3,8 +3,8 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect": {
-        "name": "Garmin Connect",
+    "Garmin_Connect_Calories": {
+        "name": "Garmin Connect Calories",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -16,8 +16,6 @@ __artifacts_v2__ = {
         "function": "get_garmin_calories"
     }
 }
-            #peut avoir plusieurs paths car tuple
-
 
 import plistlib
 
