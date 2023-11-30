@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/containers/Bundle/Application/*/ITunesMetadata.plist'),
+        "paths": ('*/private/var/containers/Bundle/Application/*/iTunesMetadata.plist'),
         "function": "get_garmin_telechargement"
 
     }
