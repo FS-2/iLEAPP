@@ -12,13 +12,14 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/containers/Bundle/Application/*/iTunesMetadata.plist'),
+        "paths": ('*/private/var/containers/Bundle/Application/*/iTunesMetadata.plist', '*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.crashlytics.data/com.garmin.connect.mobile/v5/settings/cache-key.json'),
         "function": "get_garmin_telechargement"
 
     }
 }
 
 import plistlib
+import json
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
 import pytz
@@ -34,7 +35,7 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
             file_found = str(file_found)
 
             # Ouverture et chargement du fichier
-            with open(file_found, "rb") as file:
+            with open(file_found[0], "rb") as file:
                 contenu = plistlib.load(file)
 
                 # Recherche des valeurs avec les clés associées
