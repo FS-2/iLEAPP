@@ -54,7 +54,7 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
     reports.start_artifact_report(report_folder, 'Garmin_Pay')
     reports.add_script()
     data_headers = ('Keys', 'Value')
-    reports.write_artifact_data_table(data_headers, data_list, file_found)
+    reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
     reports.end_artifact_report()
 
     # Génère le fichier TSV
