@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/GarminPayImageCache/*'),
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/GarminPayImageCache/FitPayCardImage-c4505f6c-a314-43f5-8aa5-4f126135a07c'),
         "function": "get_garmin_pay"
 
     }
@@ -47,7 +47,6 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Image de la carte', img_html))
                     logdevinfo(f"'Image de la carte': {img_html}")
-
 
 
     # Génération du rapport
