@@ -110,7 +110,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
 
     for user in utilisateur:
         reports.write_artifact_data_table(data_headers, [user.values()], file_found, write_total=False)
-        reports.add_newline()
+        
 
     # génère le fichier TSV
     tsvname = 'Garmin_Profile'
