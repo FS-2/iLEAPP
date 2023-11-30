@@ -41,12 +41,15 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
                 apple_id = contenu['com.apple.iTunesStore.downloadInfo']['accountInfo']['AppleID']
                 purchaseDate = contenu['com.apple.iTunesStore.downloadInfo']['purchaseDate']
 
-                # Ajout des valeurs à la data_list du rapport
+                # Formatage de la date
+                date_object = datetime.fromisoformat(purchaseDate)
+                date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
 
+                # Ajout des valeurs à la data_list du rapport
                 data_list.append(('Apple_id', apple_id))
-                data_list.append(('Date de téléchargement de l’application', purchaseDate))
+                data_list.append(('Date de téléchargement de l’application', date_formatee))
                 logdevinfo(f"'Apple_id': {apple_id}")
-                logdevinfo(f"'Date de téléchargement de l’application': {purchaseDate}")
+                logdevinfo(f"'Date de téléchargement de l’application': {date_formatee}")
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Telechargement')
