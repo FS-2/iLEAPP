@@ -36,7 +36,7 @@ from scripts.ilapfuncs import timeline
 
 def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_offset):
     #Cette liste sera utilisée pour stocker les données extraites
-    liste = []
+    data_list = []
     #pour chaque élément de la liste files_found, le code convertit l'élément en string
 
     for file_found in files_found:
@@ -49,8 +49,8 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 contenue = plistlib.load(file)
                 # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
 
-                root = contenue['$top']['root']
-                object = contenue['$objects']
+                root = contenu['$top']['root']
+                object = contenu['$objects']
 
                 # Extraire la dateKey et la valueKey du noeud racine
                 date_key = object[root]['dateKey']
@@ -84,9 +84,9 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 # Formater la date au format demandé
                 date_formatte = date_objec.strftime('%d.%m.%Y %H:%M:%S')
 
-                liste.append(('Date', date_formatte))
-                liste.append(('Floors_climbed', floors_climbed))
-                liste.append(('Floors_descended', floors_descended))
+                data_list.append(('Date', date_formatte))
+                data_list.append(('Floors_climbed', floors_climbed))
+                data_list.append(('Floors_descended', floors_descended))
 
 
     reports = ArtifactHtmlReport('Garmin_floors')
