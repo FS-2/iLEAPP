@@ -45,20 +45,14 @@ def resolve_uids(item, objects):
         return item
 
 def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    #Cette liste sera utilisée pour stocker les données extraites
-    liste = []
-    #pour chaque élément de la liste files_found, le code convertit l'élément en string
+    # Liste utilisée pour stocker les données extraites
+    data_list = []
     utilisateur = []
+    # Conversion des éléments en string
     for file_found in files_found:
             file_found = str(file_found)
-        #ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
-        #Le fichier est référencé par la variable fp dans le bloc suivant
-
+            # Ouverture et chargement du fichier
             with open(file_found, "rb") as file:
-
-
-
-
                 plist_data = plistlib.load(file)
 
 
@@ -101,9 +95,8 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 }
                 utilisateur.append(utilisateur1)
 
-
+    # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Profile')
-    # le report folder est définit dans l'interface graphique de iLEAPP
     reports.start_artifact_report(report_folder, 'Garmin_Profile')
     reports.add_script()
     data_headers = ('Date', 'Genre', 'Poids [Kg]', 'Taille', 'Age', 'DernierAppareilUtilisé', 'UserID')
@@ -111,17 +104,16 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     for user in utilisateur:
         reports.write_artifact_data_table(data_headers, [user.values()], file_found, write_total=False)
 
+    reports.end_artifact_report()
 
-    # génère le fichier TSV
+    # Génère le fichier TSV
     tsvname = 'Garmin_Profile'
-    tsv(report_folder, data_headers, liste, tsvname)
+    tsv(report_folder, data_headers, data_list, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Profile'
-    timeline(report_folder, tlactivity, liste, data_headers)
-
-    reports.end_artifact_report()
+    timeline(report_folder, tlactivity, data_list, data_headers)
 
 
 
