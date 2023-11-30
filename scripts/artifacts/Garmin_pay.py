@@ -41,12 +41,28 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
                 with open(file_found, "rb") as image_file:
                     encoded_image = base64.b64encode(image_file.read()).decode()
                     # Générer le HTML pour afficher l'image encodée en base64
-                    img_html = f'<img src="data:image/png;base64,{encoded_image}" alt="Garmin Pay Image" style="width:100%;height:auto;">'
+                    img_html = f'<img src="data:image/png;base64,{encoded_image}" alt="Garmin Pay Image" style="width:35%;height:auto;">'
 
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Image de la carte', img_html))
                     logdevinfo(f"'Image de la carte': {img_html}")
+
+            # Pour le second fichier (json)
+            if file_found == files_found[1]:
+                with open(files_found[1], 'r') as file:
+                    contenu = json.load(file)
+
+                    # Recherche des valeurs avec les clés associées
+                    business_operator = contenu['businessOperator']
+                    card_number = contenu['cardNumber']
+                    card_title = contenu['cardTitle']
+
+                    # Ajout des valeurs à la data_list du rapport
+                    data_list.append(('business_operator', business_operator))
+                    data_list.append(('card_number', card_number))
+                    data_list.append(('card_title', card_title))
+                    logdevinfo(f"'business_operator': {business_operator}")
 
 
     # Génération du rapport
