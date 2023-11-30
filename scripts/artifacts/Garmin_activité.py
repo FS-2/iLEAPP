@@ -90,7 +90,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
     data_headers = ("UserID", "Activité", "Calories", "Distance", "Durée", "Début", "maxHR", "maxSpeed", "StartLongitude", "StartLatitude")
 
     for i in liste_tuples:
-        reports.write_artifact_data_table(data_headers, [i.values()], file_found, write_total=False)
+        reports.write_artifact_data_table(data_headers,  [list(i.values())], file_found, write_total=False)
 
     # génère le fichier TSV
     tsvname = 'Garmin_Activité'
