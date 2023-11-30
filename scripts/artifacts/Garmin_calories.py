@@ -39,14 +39,6 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
         root = contenu['$top']['root']
         objects = contenu['$objects']
 
-        # Valeurs associées aux calories
-        value_key = objects[root]['valueKey']
-        real_time_calorie_data = objects[value_key]
-        active_calories_key = real_time_calorie_data['activeCaloriesKey']
-        total_calories_key = real_time_calorie_data['totalCaloriesKey']
-        active_calories = objects[active_calories_key]
-        total_calories = objects[total_calories_key]
-
         # Valeurs associées à la date
         date_key = objects[root]['dateKey']
         date_value = objects[date_key]['NS.time']
@@ -58,6 +50,14 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
         fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
         date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
         date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
+
+        # Valeurs associées aux calories
+        value_key = objects[root]['valueKey']
+        real_time_calorie_data = objects[value_key]
+        active_calories_key = real_time_calorie_data['activeCaloriesKey']
+        total_calories_key = real_time_calorie_data['totalCaloriesKey']
+        active_calories = objects[active_calories_key]
+        total_calories = objects[total_calories_key]
 
         # Ajout des valeurs à la data_list du rapport
         data_list.append(('Date', date_formatee))
