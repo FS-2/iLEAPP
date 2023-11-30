@@ -98,6 +98,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
     reports.add_script()
     data_headers = ('Keys', 'Value')
     reports.write_artifact_data_table(data_headers, data_list, file_found)
+    report.end_artifact_report()
 
     # génère le fichier TSV
     tsvname = 'Garmin_floors'
@@ -107,5 +108,3 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_floors'
     timeline(report_folder, tlactivity, data_list, data_headers)
-
-    reports.end_artifact_report()
