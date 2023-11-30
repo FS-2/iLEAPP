@@ -49,18 +49,18 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 contenue = plistlib.load(file)
                 # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
 
-                roo = contenue['$top']['root']
+                root = contenue['$top']['root']
                 object = contenue['$objects']
 
                 # Extraire la dateKey et la valueKey du noeud racine
-                date_ke = object[roo]['dateKey']
-                value_ke = object[roo]['valueKey']
+                date_key = object[root]['dateKey']
+                value_key = object[root]['valueKey']
 
                 # Obtention de la valeur associée à dateKey
-                date_valu = object[date_ke]['NS.time']
+                date_value = object[date_key]['NS.time']
 
                 # Obtention des informations sur les étages
-                floors_dat = object[value_ke]
+                floors_dat = object[value_key]
 
                 # Extraire les clés pour les étages descendus et montés
                 floors_descended_key = floors_dat['floorsDescendedKey']
@@ -71,7 +71,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 floors_climbed = object[floors_climbed_key]
 
                 epoch_offset = datetime(2001, 1, 1).timestamp()
-                adjusted_timestamp = date_valu + epoch_offset
+                adjusted_timestamp = date_value + epoch_offset
 
                 # Convertir le timestamp en objet datetime
                 date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
