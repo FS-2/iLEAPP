@@ -69,15 +69,15 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
             # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
 
             for activite in value_key['NS.objects']:
-                tuple_activite = ()
+                dict_activite = {}
                 for cle in ['activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR', 'ownerId',
                             'maxSpeed', 'startLongitude', 'startLatitude']:
                     if cle in activite['NS.keys']:
                         index = activite['NS.keys'].index(cle)
-                        tuple_activite += (activite['NS.objects'][index],)
+                        dict_activite[cle] = activite['NS.objects'][index]  # Ajoutez la valeur au dictionnaire
                     else:
-                        tuple_activite += ('Inconnu',)
-                liste_tuples.append(tuple_activite)
+                        dict_activite[cle] = 'Inconnu'
+                liste_tuples.append(dict_activite)
 
 
     reports = ArtifactHtmlReport('Garmin_Activité')
@@ -87,7 +87,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
     data_headers = ("UserID", "Activité", "Calories", "Distance", "Durée", "Début", "maxHR", "maxSpeed", "StartLongitude", "StartLatitude")
 
     for i in liste_tuples:
-        reports.write_artifact_data_table(data_headers, i, file_found, write_total=False)
+        reports.write_artifact_data_table(data_headers, [i.values()], file_found, write_total=False)
 
     # génère le fichier TSV
     tsvname = 'Garmin_Activité'
