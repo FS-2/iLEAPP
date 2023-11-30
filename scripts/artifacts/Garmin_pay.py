@@ -50,19 +50,26 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
 
             # Pour le second fichier (json)
             if file_found == files_found[1]:
-                with open(files_found[1], 'r') as file:
-                    contenu = json.load(file)
+                for item in file_found:
+                    if isinstance(item, list):
+                        for sub_item in item:
+                            if isinstance(sub_item, list):
+                                for json_str in sub_item:
+                                    if isinstance(json_str, str):
+                                        # Convertir la chaîne JSON en dictionnaire
+                                        contenu = json.loads(json_str)
 
-                    # Recherche des valeurs avec les clés associées
-                    business_operator = contenu['businessOperator']
-                    card_number = contenu['cardNumber']
-                    card_title = contenu['cardTitle']
 
-                    # Ajout des valeurs à la data_list du rapport
-                    data_list.append(('business_operator', business_operator))
-                    data_list.append(('card_number', card_number))
-                    data_list.append(('card_title', card_title))
-                    logdevinfo(f"'business_operator': {business_operator}")
+                                        # Recherche des valeurs avec les clés associées
+                                        business_operator = contenu['businessOperator']
+                                        card_number = contenu['cardNumber']
+                                        card_title = contenu['cardTitle']
+
+                                        # Ajout des valeurs à la data_list du rapport
+                                        data_list.append(('business_operator', business_operator))
+                                        data_list.append(('card_number', card_number))
+                                        data_list.append(('card_title', card_title))
+                                        logdevinfo(f"'business_operator': {business_operator}")
 
 
     # Génération du rapport
