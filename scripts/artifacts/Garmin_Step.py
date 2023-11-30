@@ -41,43 +41,36 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
 
     for file_found in files_found:
             file_found = str(file_found)
-            #ouverture et chargement du fichier
+
+            # Ouverture et chargement du fichier
             with open(file_found, "rb") as file:
                 contenu = plistlib.load(file)
 
+                # Recherche des valeurs avec les clés associées
                 root = contenu['$top']['root']
                 object = contenu['$objects']
 
+                # Valeurs associées aux étages
                 value_key = object[root]['valueKey']
-
-
-
-                # Obtention des informations sur les étages
-                floors_dat = object[value_key]
-
-                # Extraire les clés pour les étages descendus et montés
-                floors_descended_key = floors_dat['floorsDescendedKey']
-                floors_climbed_key = floors_dat['floorsClimbedKey']
-
-                # Obtention des valeurs associées aux clés des étages
+                floors_data = object[value_key]
+                floors_descended_key = floors_data['floorsDescendedKey']
+                floors_climbed_key = floors_data['floorsClimbedKey']
                 floors_descended = object[floors_descended_key]
                 floors_climbed = object[floors_climbed_key]
 
+                # Valeurs associées à la date
                 date_key = object[root]['dateKey']
                 date_value = object[date_key]['NS.time']
 
+                # Conversion du format de la date
                 epoch_offset = datetime(2001, 1, 1).timestamp()
                 adjusted_timestamp = date_value + epoch_offset
-
-                # Convertir le timestamp en objet datetime
                 date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
-
-                # Appliquer le fuseau horaire (par exemple, UTC+1)
-                fuseau_horaire = pytz.timezone('Europe/Paris')  # fuseau horaire pertinent
-                date_objec = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
+                fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
+                date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
 
                 # Formater la date au format demandé
-                date_formatte = date_objec.strftime('%d.%m.%Y %H:%M:%S')
+                date_formatte = date_object.strftime('%d.%m.%Y %H:%M:%S')
 
                 data_list.append(('Date', date_formatte))
                 data_list.append(('Floors_climbed', floors_climbed))
@@ -92,7 +85,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
     reports.add_script()
     data_headers = ('Keys', 'Value')
     reports.write_artifact_data_table(data_headers, data_list, file_found)
-    report.end_artifact_report()
+    reports.end_artifact_report()
 
     # génère le fichier TSV
     tsvname = 'Garmin_floors'
