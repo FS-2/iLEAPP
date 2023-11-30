@@ -14,7 +14,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%2Ec2678cb2-9b3b-4cc3-b019-8c43e49ba685'),
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%*'),
         "function": "get_garmin_activite"
 
 
@@ -89,8 +89,11 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
     reports.add_script()
     data_headers = ("UserID", "Activité", "Calories", "Distance", "Durée", "Début", "maxHR", "maxSpeed", "StartLongitude", "StartLatitude")
 
-    for i in liste_tuples:
-        reports.write_artifact_data_table(data_headers, [i.values()], file_found, write_total=False)
+    for activite_dict in liste_tuples:
+        # Convertit le dictionnaire en une liste de ses valeurs
+        row = [activite_dict.get(header, 'Inconnu') for header in data_headers]
+        # Écriture de la ligne dans le rapport
+        reports.write_artifact_data_table(data_headers, [row], file_found, write_total=False)
 
     # génère le fichier TSV
     tsvname = 'Garmin_Activité'
