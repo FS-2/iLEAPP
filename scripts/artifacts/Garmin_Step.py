@@ -36,7 +36,7 @@ from scripts.ilapfuncs import timeline
 
 def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_offset):
     #Cette liste sera utilisée pour stocker les données extraites
-    liste = []
+    data_list = []
     #pour chaque élément de la liste files_found, le code convertit l'élément en string
 
     for file_found in files_found:
@@ -46,7 +46,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
 
             with open(file_found, "rb") as file:
 
-                contenue = plistlib.load(file)
+                contenu = plistlib.load(file)
                 # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
 
                 root = contenu['$top']['root']
@@ -84,9 +84,9 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 # Formater la date au format demandé
                 date_formatte = date_objec.strftime('%d.%m.%Y %H:%M:%S')
 
-                liste.append(('Date', date_formatte))
-                liste.append(('Floors_climbed', floors_climbed))
-                liste.append(('Floors_descended', floors_descended))
+                data_list.append(('Date', date_formatte))
+                data_list.append(('Floors_climbed', floors_climbed))
+                data_list.append(('Floors_descended', floors_descended))
 
 
     reports = ArtifactHtmlReport('Garmin_floors')
@@ -94,15 +94,15 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
     reports.start_artifact_report(report_folder, 'Garmin_floors')
     reports.add_script()
     data_headers = ('Keys', 'Value')
-    reports.write_artifact_data_table(data_headers, liste, file_found)
+    reports.write_artifact_data_table(data_headers, data_list, file_found)
 
     # génère le fichier TSV
     tsvname = 'Garmin_floors'
-    tsv(report_folder, data_headers, liste, tsvname)
+    tsv(report_folder, data_headers, data_list, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_floors'
-    timeline(report_folder, tlactivity, liste, data_headers)
+    timeline(report_folder, tlactivity, data_list, data_headers)
 
     reports.end_artifact_report()
