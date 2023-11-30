@@ -80,7 +80,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                         if cle == 'distance':
                             dict_activite[cle] = activite['NS.objects'][index]/1000
                         if cle == 'duration':
-                            dict_activite[cle] = activite['NS.objects'][index]/3600
+                            dict_activite[cle] = activite['NS.objects'][index]/60
 
                     else:
                         dict_activite[cle] = 'Inconnu'
