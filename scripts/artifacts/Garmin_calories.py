@@ -3,9 +3,6 @@
 # Date: 05.12.2023
 
 
-# Module Description: Parses Garmin Connect details
-# Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 05.12.2023
 
 __artifacts_v2__ = {
     "Garmin_Connect": {
@@ -18,13 +15,13 @@ __artifacts_v2__ = {
         "category": "Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),
-        "function": "get_garmin"
+        "function": "get_garmin_calories"
     }
 }
             #peut avoir plusieurs paths car tuple
 
 
-import plistlib
+
 
 import plistlib
 from scripts.artifact_report import ArtifactHtmlReport
@@ -38,7 +35,7 @@ from scripts.ilapfuncs import timeline
 #paramètres sont utilisés pour traiter des fichiers, générer des rapports,
 #rechercher des informations, gérer le formatage du texte et ajuster les décalages de fuseau horaire
 
-def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_offset):
     #Cette liste sera utilisée pour stocker les données extraites
     data_list = []
     #pour chaque élément de la liste files_found, le code convertit l'élément en string
@@ -77,7 +74,7 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
             # Formater la date au format demandé
             date_formattee = date_object.strftime('%d.%m.%Y %H:%M:%S')
 
-            date_formatée = date_object.strftime('%d.%m.%Y %H:%M:%S')
+
 
             # Accès aux données spécifiques à RealTimeCalorieData
             active_calories_key = real_time_calorie_data['activeCaloriesKey']
@@ -93,22 +90,24 @@ def get_garmin(files_found, report_folder, seeker, wrap_text, timezone_offset):
             data_list.append(('Active Calories', active_calories))
             data_list.append(('Total Calories', total_calories))
 
-    report = ArtifactHtmlReport('Garmin')
+    report = ArtifactHtmlReport('Garmin_dernières calories')
     #le report folder est définit dans l'interface graphique de iLEAPP
-    report.start_artifact_report(report_folder, 'Garmin')
+    report.start_artifact_report(report_folder, 'Garmin_dernières calories')
     report.add_script()
     data_headers = ('Key', 'Values')
     report.write_artifact_data_table(data_headers, data_list, file_found)
 
 
     #génère le fichier TSV
-    tsvname = 'Garmin'
+    tsvname = 'Garmin_dernières calories'
     tsv(report_folder, data_headers, data_list, tsvname)
 
     #insérer les enregistrements horodatés dans la timeline
     #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin'
+    tlactivity = 'Garmin_dernières calories'
     timeline(report_folder, tlactivity, data_list, data_headers)
 
     report.end_artifact_report()
+
+
 
