@@ -38,7 +38,7 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
                 file_found = files_found[0]
 
                 # Ouverture et chargement du fichier
-                with open(file_found, "rb") as file:
+                with open(files_found[0], "rb") as file:
                     contenu = plistlib.load(file)
 
                     # Recherche des valeurs avec les clés associées
@@ -57,7 +57,7 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
 
             if files_found:
                 file_found = files_found[1]
-                with open(file_found, 'r') as file:
+                with open(files_found[1], 'r') as file:
                     contenu = json.load(file)
 
                     # Recherche des valeurs avec les clés associées
