@@ -96,7 +96,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Activité'
-    timeline(report_folder, tlactivity, liste_tuples, data_headers)
+    #timeline(report_folder, tlactivity, liste_tuples, data_headers)
 
     reports.end_artifact_report()
 
