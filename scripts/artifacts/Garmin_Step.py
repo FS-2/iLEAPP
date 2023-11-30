@@ -52,7 +52,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
 
                 contenue = plistlib.load(file)
                 # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
-                print(contenue)
+
                 roo = contenue['$top']['root']
                 object = contenue['$objects']
 
