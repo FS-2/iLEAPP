@@ -77,6 +77,8 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                     if cle in activite['NS.keys']:
                         index = activite['NS.keys'].index(cle)
                         dict_activite[cle] = activite['NS.objects'][index]  # Ajoutez la valeur au dictionnaire
+                        if cle == 'distance':
+                            dict_activite[cle] = activite['NS.objects'][index]/1000
                     else:
                         dict_activite[cle] = 'Inconnu'
                 liste_tuples.append(dict_activite)
