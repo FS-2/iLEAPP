@@ -34,6 +34,7 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
     for file_found in files_found:
             file_found = str(file_found)
 
+            # Pour le premier fichier (plist xml)
             if file_found == files_found[0]:
 
                 # Ouverture et chargement du fichier
@@ -54,6 +55,7 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
                     logdevinfo(f"'Apple_id': {apple_id}")
                     logdevinfo(f"'Date de téléchargement de l’application': {date_formatee}")
 
+            # Pour le second fichier (json)
             if file_found == files_found[1]:
                 with open(files_found[1], 'r') as file:
                     contenu = json.load(file)
@@ -67,7 +69,6 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
                     data_list.append(('App ID', google_app_id))
                     logdevinfo(f"'App version': {app_version}")
                     logdevinfo(f"'App ID': {google_app_id}")
-
 
 
     # Génération du rapport
