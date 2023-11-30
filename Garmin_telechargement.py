@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeFloorsCacheDataKey'),
+        "paths": ('*/private/var/containers/Bundle/Application/*/ITunesMetadata.plist'),
         "function": "get_garmin_telechargement"
 
     }
