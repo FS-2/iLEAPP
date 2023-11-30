@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/GarminPayImageCache/FitPayCardImage-c4505f6c-a314-43f5-8aa5-4f126135a07c', '*/private/var/mobile/Containers/Data/Application/*/Library/Caches/GarminPayWalletItemsCache'),
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/GarminPayImageCache/*', '*/private/var/mobile/Containers/Data/Application/*/Library/Caches/GarminPayWalletItemsCache'),
         "function": "get_garmin_pay"
 
     }
