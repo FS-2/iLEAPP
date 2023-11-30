@@ -30,15 +30,10 @@ from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 
-#on définit la fonction get_garmin
-#paramètres sont utilisés pour traiter des fichiers, générer des rapports,
-#rechercher des informations, gérer le formatage du texte et ajuster les décalages de fuseau horaire
-
 def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    #Cette liste sera utilisée pour stocker les données extraites
+    # Liste utilisée pour stocker les données extraites
     data_list = []
-    #pour chaque élément de la liste files_found, le code convertit l'élément en string
-
+    # Conversion des éléments en string
     for file_found in files_found:
             file_found = str(file_found)
 
@@ -68,10 +63,9 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
                 fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
                 date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
-
-                # Formater la date au format demandé
                 date_formatte = date_object.strftime('%d.%m.%Y %H:%M:%S')
 
+                # Ajout des valeurs à la data_list du rapport
                 data_list.append(('Date', date_formatte))
                 data_list.append(('Floors_climbed', floors_climbed))
                 data_list.append(('Floors_descended', floors_descended))
