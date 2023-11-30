@@ -70,7 +70,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
             liste_tuples = []
             for activite in value_key['NS.objects']:
                 dict_activite = {}
-                for cle in ['activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR', 'ownerId',
+                for cle in ['ownerId','activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR',
                             'maxSpeed', 'startLongitude', 'startLatitude']:
                     if cle in activite['NS.keys']:
                         index = activite['NS.keys'].index(cle)
