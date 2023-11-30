@@ -77,13 +77,13 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                         dict_activite[cle] = activite['NS.objects'][index]  # Ajoutez la valeur au dictionnaire
                     else:
                         dict_activite[cle] = 'Inconnu'
-            liste_tuples.append(dict_activite)
-            print(liste_tuples)
+                liste_tuples.append(dict_activite)
+                print(liste_tuples)
 
 
     reports = ArtifactHtmlReport('Garmin_Activité')
     # le report folder est définit dans l'interface graphique de iLEAPP
-    reports.start_artifact_report(report_folder, 'Garmin_Profile')
+    reports.start_artifact_report(report_folder, 'Garmin_Activite')
     reports.add_script()
     data_headers = ("UserID", "Activité", "Calories", "Distance", "Durée", "Début", "maxHR", "maxSpeed", "StartLongitude", "StartLatitude")
 
