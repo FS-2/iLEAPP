@@ -78,7 +78,9 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                     else:
                         tuple_activite += ('Inconnu',)
                 liste_tuples.append(tuple_activite)
-    reports = ArtifactHtmlReport('Garmin_Profile')
+
+
+    reports = ArtifactHtmlReport('Garmin_Activité')
     # le report folder est définit dans l'interface graphique de iLEAPP
     reports.start_artifact_report(report_folder, 'Garmin_Profile')
     reports.add_script()
@@ -88,12 +90,12 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
         reports.write_artifact_data_table(data_headers, [i], file_found, write_total=False)
 
     # génère le fichier TSV
-    tsvname = 'Garmin_Profile'
+    tsvname = 'Garmin_Activité'
     tsv(report_folder, data_headers, liste_tuples, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_Profile'
+    tlactivity = 'Garmin_Activité'
     timeline(report_folder, tlactivity, liste_tuples, data_headers)
 
     reports.end_artifact_report()
