@@ -48,7 +48,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     #Cette liste sera utilisée pour stocker les données extraites
     liste = []
     #pour chaque élément de la liste files_found, le code convertit l'élément en string
-
+    utilisateur = []
     for file_found in files_found:
             file_found = str(file_found)
         #ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
@@ -90,22 +90,28 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 last_device = value_key['lastUsedDevice']
                 lastDeviceUsed = last_device['lastUsedDeviceName']
                 userID = last_device['userProfileNumber']
+                utilisateur = {
+                    "Date": date,
+                    "Genre": gender,
+                    "Poids": weight,
+                    "Taille": height,
+                    "Age": age,
+                    "DernierAppareilUtilisé": lastDeviceUsed,
+                    "UserID": userID
+                }
+                utilisateur.append(utilisateur)
 
-                liste.append(('Date', date))
-                liste.append(('Genre', gender))
-                liste.append(("Poids", weight))
-                liste.append(("Taille", height))
-                liste.append(("Age", age))
-                liste.append(("LastUsedDeviceName", lastDeviceUsed))
-                liste.append(("userid", userID))
 
     reports = ArtifactHtmlReport('Garmin_Profile')
     # le report folder est définit dans l'interface graphique de iLEAPP
     reports.start_artifact_report(report_folder, 'Garmin_Profile')
     reports.add_script()
-    data_headers = ('Keys', 'Value')
-    reports.write_artifact_data_table(data_headers, liste, file_found)
+    data_headers = ('Date', 'Genre', 'Poids', 'Taille', 'Age', 'DernierAppareilUtilisé', 'UserID')
 
+    for user in utilisateur:
+        reports.write_artifact_data_table(data_headers, [user.values()], file_found, write_total=False)
+        reports.add_newline()
+    
     # génère le fichier TSV
     tsvname = 'Garmin_Profile'
     tsv(report_folder, data_headers, liste, tsvname)
