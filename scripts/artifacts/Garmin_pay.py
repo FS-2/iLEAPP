@@ -20,6 +20,7 @@ __artifacts_v2__ = {
 
 import plistlib
 import json
+import base64
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
 import pytz
@@ -30,19 +31,16 @@ from scripts.ilapfuncs import timeline
 def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
     data_list = []
-    # Conversion des éléments en string
-    for file_found in files_found:
-            file_found = str(file_found)
 
-            # Pour le premier fichier (PNG)
-            if file_found == files_found[0]:
+        # Pour le premier fichier (PNG)
+        if file_found == files_found[0]:
 
-                # Ouverture et chargement du fichier
-                img_html = f'<img src="file://{file_found}" alt="Garmin Pay Image" style="width:100%;height:auto;">'
+            # Ouverture et chargement du fichier
+            img_html = f'<img src="file://{file_found}" alt="Garmin Pay Image" style="width:100%;height:auto;">'
 
-                # Ajout des valeurs à la data_list du rapport
-                data_list.append(('Image de la carte', img_html))
-                logdevinfo(f"'Image de la carte': {img_html}")
+            # Ajout des valeurs à la data_list du rapport
+            data_list.append(('Image de la carte', img_html))
+            logdevinfo(f"'Image de la carte': {img_html}")
 
 
 
