@@ -83,6 +83,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 age = biometric_profile['age']  # 22
                 activity_level = biometric_profile['activityLevel']  # 0
                 vo2_max_running = biometric_profile['vo2MaxRunning']  # 0.0
+                weight = weight/1000
 
 
 
@@ -110,7 +111,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
 
     for user in utilisateur:
         reports.write_artifact_data_table(data_headers, [user.values()], file_found, write_total=False)
-        
+
 
     # génère le fichier TSV
     tsvname = 'Garmin_Profile'
