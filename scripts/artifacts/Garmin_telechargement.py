@@ -39,7 +39,7 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
 
                 # Recherche des valeurs avec les clés associées
                 apple_id = contenu['com.apple.iTunesStore.downloadInfo']['accountInfo']['AppleID']
-                purchaseDate = contenu['com.apple.iTunesStore.downloadInfo']['accountInfo']['purchaseDate']
+                purchaseDate = contenu['com.apple.iTunesStore.downloadInfo']['purchaseDate']
 
                 # Ajout des valeurs à la data_list du rapport
 
