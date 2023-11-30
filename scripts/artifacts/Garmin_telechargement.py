@@ -50,9 +50,9 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
                     date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
 
                     # Ajout des valeurs à la data_list du rapport
-                    data_list.append(('Apple_id', apple_id))
+                    data_list.append(('Apple ID', apple_id))
                     data_list.append(('Date de téléchargement de l’application', date_formatee))
-                    logdevinfo(f"'Apple_id': {apple_id}")
+                    logdevinfo(f"'Apple ID': {apple_id}")
                     logdevinfo(f"'Date de téléchargement de l’application': {date_formatee}")
 
             # Pour le second fichier (json)
