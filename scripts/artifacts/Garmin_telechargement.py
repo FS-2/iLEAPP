@@ -57,7 +57,7 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
     reports.start_artifact_report(report_folder, 'Garmin_Telechargement')
     reports.add_script()
     data_headers = ('Keys', 'Value')
-    reports.write_artifact_data_table(data_headers, data_list, file_found)
+    reports.write_artifact_data_table(data_headers, data_list, file_found[0])
     reports.end_artifact_report()
 
     # Génère le fichier TSV
