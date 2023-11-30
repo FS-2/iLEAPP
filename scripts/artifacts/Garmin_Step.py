@@ -74,11 +74,11 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 adjusted_timestamp = date_value + epoch_offset
 
                 # Convertir le timestamp en UTC (si nécessaire)
-                utc_timestamp = convert_ts_human_to_utc(adjusted_timestamp)
+                #utc_timestamp = convert_ts_human_to_utc(adjusted_timestamp)
 
                 # Convertir de UTC vers le fuseau horaire désiré
                 timezone_offset = 'Europe/Paris'  # Remplacez ceci par le fuseau horaire voulu
-                date_formatte = convert_utc_human_to_timezone(utc_timestamp, timezone_offset)
+                date_formatte = convert_utc_human_to_timezone(adjusted_timestamp, timezone_offset)
 
                 data_list.append(('Date', date_formatte))
                 data_list.append(('Floors_climbed', floors_climbed))
