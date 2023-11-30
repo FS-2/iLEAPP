@@ -27,6 +27,23 @@ from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 
 
+def resolve_uids(item, objects):
+    """
+    Fonction récursive pour résoudre les références UID dans les données plist.
+    """
+    if isinstance(item, plistlib.UID):
+        # Résoudre la référence UID
+        return resolve_uids(objects[item.data], objects)
+    elif isinstance(item, dict):
+        # Résoudre récursivement dans les dictionnaires
+        return {key: resolve_uids(value, objects) for key, value in item.items()}
+    elif isinstance(item, list):
+        # Résoudre récursivement dans les listes
+        return [resolve_uids(value, objects) for value in item]
+    else:
+        # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
+        return item
+
 def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):
     #Cette liste sera utilisée pour stocker les données extraites
     liste = []
@@ -39,74 +56,48 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
 
             with open(file_found, "rb") as file:
 
-                contenue = plistlib.load(file)
-
-                import os
-                import plistlib
-                from datetime import datetime
-                import pytz
-                import json
-
-                data_list = []
-
-                def resolve_uids(item, objects):
-                    """
-                    Fonction récursive pour résoudre les références UID dans les données plist.
-                    """
-                    if isinstance(item, plistlib.UID):
-                        # Résoudre la référence UID
-                        return resolve_uids(objects[item.data], objects)
-                    elif isinstance(item, dict):
-                        # Résoudre récursivement dans les dictionnaires
-                        return {key: resolve_uids(value, objects) for key, value in item.items()}
-                    elif isinstance(item, list):
-                        # Résoudre récursivement dans les listes
-                        return [resolve_uids(value, objects) for value in item]
-                    else:
-                        # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
-                        return item
-
-                with open("UserProfile%2EaboutData%2Ec2678cb2-9b3b-4cc3-b019-8c43e49ba685", "rb") as fp:
-
-                    plist_data = plistlib.load(fp)
 
 
-                    contenu = resolve_uids(plist_data, plist_data['$objects'])
 
-                    root = contenu['$top']['root']  # Accéder à la racine
-
-
-                    date = root['dateKey']['NS.time']
+                plist_data = plistlib.load(file)
 
 
-                    # Accéder à 'valueKey' dans le dictionnaire 'root'
-                    value_key = root['valueKey']
+                contenu = resolve_uids(plist_data, plist_data['$objects'])
 
-                    # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
-                    biometric_profile = value_key['biometricProfile']
+                root = contenu['$top']['root']  # Accéder à la racine
 
-                    # Récupérer les données de 'biometricProfile'
-                    gender = biometric_profile['gender']  # 'MALE'
-                    weight = biometric_profile['weight']  # 75000.0
-                    height = biometric_profile['height']  # 175.0
-                    age = biometric_profile['age']  # 22
-                    activity_level = biometric_profile['activityLevel']  # 0
-                    vo2_max_running = biometric_profile['vo2MaxRunning']  # 0.0
+
+                date = root['dateKey']['NS.time']
+
+
+                # Accéder à 'valueKey' dans le dictionnaire 'root'
+                value_key = root['valueKey']
+
+                # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
+                biometric_profile = value_key['biometricProfile']
+
+                # Récupérer les données de 'biometricProfile'
+                gender = biometric_profile['gender']  # 'MALE'
+                weight = biometric_profile['weight']  # 75000.0
+                height = biometric_profile['height']  # 175.0
+                age = biometric_profile['age']  # 22
+                activity_level = biometric_profile['activityLevel']  # 0
+                vo2_max_running = biometric_profile['vo2MaxRunning']  # 0.0
 
 
 
 
-                    last_device = value_key['lastUsedDevice']
-                    lastDeviceUsed = last_device['lastUsedDeviceName']
-                    userID = last_device['userProfileNumber']
+                last_device = value_key['lastUsedDevice']
+                lastDeviceUsed = last_device['lastUsedDeviceName']
+                userID = last_device['userProfileNumber']
 
-                    liste.append("Date", date)
-                    liste.append("Genre", gender)
-                    liste.append("Poids", weight)
-                    liste.append("Taille", height)
-                    liste.append("Age", age)
-                    liste.append("LastUsedDeviceName", lastDeviceUsed)
-                    liste.append("userid", userID)
+                liste.append("Date", date)
+                liste.append("Genre", gender)
+                liste.append("Poids", weight)
+                liste.append("Taille", height)
+                liste.append("Age", age)
+                liste.append("LastUsedDeviceName", lastDeviceUsed)
+                liste.append("userid", userID)
 
     reports = ArtifactHtmlReport('Garmin_Profile')
     # le report folder est définit dans l'interface graphique de iLEAPP
