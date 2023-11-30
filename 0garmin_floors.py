@@ -12,7 +12,7 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%2Ec2678cb2-9b3b-4cc3-b019-8c43e49ba685'),
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeFloorsCacheDataKey'),
         "function": "get_garmin_floors"
     }
 }
@@ -31,7 +31,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
     #Cette liste sera utilisée pour stocker les données extraites
     data_list = []
     #pour chaque élément de la liste files_found, le code convertit l'élément en string
-    file_found = str(files_found[0])
+    file_found = str(files_found)
 
     # ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
     with open(file_found, "rb") as fp:
