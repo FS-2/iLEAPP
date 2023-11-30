@@ -77,8 +77,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
 
                 # Appliquer le fuseau horaire (par exemple, UTC+1)
-                fuseau_horaire = pytz.timezone('Europe/Paris')  # Remplacez 'Europe/Paris' par votre fuseau horaire
-                fuseau_horaire = pytz.timezone('Europe/Paris')
+                fuseau_horaire = pytz.timezone('Europe/Paris')  # fuseau horaire pertinent
                 date_objec = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
 
                 # Formater la date au format demandé
