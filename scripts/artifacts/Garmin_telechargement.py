@@ -55,6 +55,23 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
                     logdevinfo(f"'Apple_id': {apple_id}")
                     logdevinfo(f"'Date de téléchargement de l’application': {date_formatee}")
 
+            if files_found:
+                file_found = files_found[1]
+                with open(file_found, 'r') as file:
+                    contenu = json.load(file)
+
+                    # Recherche des valeurs avec les clés associées
+                    app_version = data['app_version']
+                    google_app_id = data['google_app_id']
+
+                    # Ajout des valeurs à la data_list du rapport
+                    data_list.append(('App version', app_version))
+                    data_list.append(('App ID', google_app_id))
+                    logdevinfo(f"'App version': {app_version}")
+                    logdevinfo(f"'App ID': {google_app_id}")
+
+
+
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Telechargement')
     reports.start_artifact_report(report_folder, 'Garmin_Telechargement')
