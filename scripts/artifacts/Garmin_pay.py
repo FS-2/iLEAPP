@@ -38,7 +38,7 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
             if file_found == files_found[0]:
 
                 # Ouverture et chargement du fichier
-                img_html = f'<img src="{file_found}" alt="Garmin Pay Image">'
+                img_html = f'<img src="file://{file_found}" alt="Garmin Pay Image" style="width:100%;height:auto;">'
 
                 # Ajout des valeurs à la data_list du rapport
                 data_list.append(('Image de la carte', img_html))
