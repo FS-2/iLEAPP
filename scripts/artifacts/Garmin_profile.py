@@ -89,10 +89,9 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 lastDeviceUsed = last_device['lastUsedDeviceName']
                 userID = last_device['userProfileNumber']
 
-                date_convert = convert_ts_human_to_utc(date)
-                date_convert = convert_utc_human_to_timezone(date_convert,timezone_offset)
+
                 utilisateur1 = {
-                    "Date": date_convert,
+                    "Date": date,
                     "Genre": gender,
                     "Poids": weight,
                     "Taille": height,
