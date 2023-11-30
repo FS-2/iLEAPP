@@ -90,7 +90,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 last_device = value_key['lastUsedDevice']
                 lastDeviceUsed = last_device['lastUsedDeviceName']
                 userID = last_device['userProfileNumber']
-                utilisateur = {
+                utilisateur1 = {
                     "Date": date,
                     "Genre": gender,
                     "Poids": weight,
@@ -99,7 +99,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                     "DernierAppareilUtilisé": lastDeviceUsed,
                     "UserID": userID
                 }
-                utilisateur.append(utilisateur)
+                utilisateur.append(utilisateur1)
 
 
     reports = ArtifactHtmlReport('Garmin_Profile')
@@ -111,7 +111,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     for user in utilisateur:
         reports.write_artifact_data_table(data_headers, [user.values()], file_found, write_total=False)
         reports.add_newline()
-    
+
     # génère le fichier TSV
     tsvname = 'Garmin_Profile'
     tsv(report_folder, data_headers, liste, tsvname)
