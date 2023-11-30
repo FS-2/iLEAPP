@@ -69,7 +69,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 logdevinfo(f"floors_descended: {floors_descended}")
 
 
-    #Génération du rapport
+    # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_floors')
     reports.start_artifact_report(report_folder, 'Garmin_floors')
     reports.add_script()
@@ -77,7 +77,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
     reports.write_artifact_data_table(data_headers, data_list, file_found)
     reports.end_artifact_report()
 
-    # génère le fichier TSV
+    # Génère le fichier TSV
     tsvname = 'Garmin_floors'
     tsv(report_folder, data_headers, data_list, tsvname)
 
