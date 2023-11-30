@@ -78,6 +78,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                     else:
                         dict_activite[cle] = 'Inconnu'
                 liste_tuples.append(dict_activite)
+                print(liste_tuples)
 
 
     reports = ArtifactHtmlReport('Garmin_Activité')
