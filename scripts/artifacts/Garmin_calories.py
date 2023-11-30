@@ -47,24 +47,20 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
         active_calories = objects[active_calories_key]
         total_calories = objects[total_calories_key]
 
+        # Valeurs associées à la date
         date_key = objects[root]['dateKey']
         date_value = objects[date_key]['NS.time']
+
+        # Conversion du format de la date
         epoch_offset = datetime(2001, 1, 1).timestamp()
         adjusted_timestamp = date_value + epoch_offset
-
-        # Convertir le timestamp en objet datetime
         date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
-
-        # Appliquer le fuseau horaire (par exemple, UTC+1)
-        fuseau_horaire = pytz.timezone('Europe/Paris')  # Remplacez 'Europe/Paris' par votre fuseau horaire
-        fuseau_horaire = pytz.timezone('Europe/Paris')
+        fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
         date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
-
-        # Formater la date au format demandé
         date_formattee = date_object.strftime('%d.%m.%Y %H:%M:%S')
-        data_list.append(('Date', date_formattee))
 
         # Ajout des valeurs à la data_list du rapport
+        data_list.append(('Date', date_formattee))
         data_list.append(('Active Calories', active_calories))
         data_list.append(('Total Calories', total_calories))
         logdevinfo(f"Active Calories: {active_calories}")
