@@ -25,7 +25,7 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 import base64
 import os
 
@@ -74,28 +74,29 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
                 values = [item[1] for item in liste]
 
                 # Créez le graphique
-                plt.figure(figsize=(10, 6))
-                plt.plot(dates, values, marker='o', linestyle='-')
-                plt.title('Graphique de fréquence cardiaque Garmin')
-                plt.xlabel('Date')
-                plt.ylabel('Fréquence cardiaque')
-                plt.grid(True)
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines+markers', name='Fréquence cardiaque'))
 
-                # Générer le HTML pour afficher l'image encodée en base64
+                # Mettez à jour les titres et la mise en page
+                fig.update_layout(title='Graphique de fréquence cardiaque Garmin',
+                                  xaxis_title='Date',
+                                  yaxis_title='Fréquence cardiaque',
+                                  template='plotly_white')
 
+                # Enregistrez le graphique sous forme d'image PNG
                 graph_image_path = os.path.join(report_folder, 'garmin_hearth_graph.png')
-                plt.savefig(graph_image_path)
-                plt.close()
+                fig.write_image(graph_image_path)
 
+                # Utilisez l'image dans votre rapport comme précédemment
                 with open(graph_image_path, "rb") as image_file:
                     graph_image_base64 = base64.b64encode(image_file.read()).decode()
 
-                # Générer le HTML pour afficher l'image encodée en base64
-                    img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Pay Image" style="width:35%;height:auto;">'
+                    # Générer le HTML pour afficher l'image encodée en base64
+                    img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Hearth Graph" style="width:35%;height:auto;">'
 
-                # Ajout des valeurs à la data_list du rapport
-                data_list.append(('Image de la carte', img_html))
-                logdevinfo(f"'Image de la carte': {img_html}")
+                    # Ajout des valeurs à la data_list du rapport
+                    data_list.append(('Image de la carte', img_html))
+                    logdevinfo(f"'Image de la carte': {img_html}")
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Hearth')
@@ -103,7 +104,7 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
     reports.add_script()
     data_headers = ('Keys', 'Value')
     reports.write_artifact_data_table(data_headers, liste, file_found)
-    reports.write_artifact_data_table(data_headers, data_list, file_found)
+    reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
 
     # Génère le fichier TSV
     tsvname = 'Garmin_Hearth'
@@ -113,26 +114,3 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Hearth'
     timeline(report_folder, tlactivity, liste, data_headers)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
