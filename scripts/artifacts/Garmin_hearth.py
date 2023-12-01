@@ -33,7 +33,7 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
     for file_found in files_found:
             file_found = str(file_found)
 
-            # Ouverture et chargement du fichier
+            # Ouverture et chargement du fichier plist
             with open(file_found, "rb") as file:
                 contenu = plistlib.load(file)
 
@@ -45,10 +45,18 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
                 allDayHeartRateKey = objects[root]['allDayHeartRateKey']
                 heartRateValues = objects[allDayHeartRateKey]
                 NS_objects = heartRateValues['NS.objects']
+                UID_15_objects = objects[15]['NS.objects']
+                # Trouver l'index de UID(19) dans UID_15_objects
+                index_UID_19 = [idx for idx, obj in enumerate(UID_15_objects) if obj == 'UID(19)'][0]
+                # Accéder à UID(19)
+                UID_19_objects = objects[19]['NS.objects']
+                # Enfin, obtenir la valeur "79" de UID(18)
+                UID_18_value = objects[UID_19_objects[index_UID_19 + 1]]  # +1 pour obtenir la valeur après UID(18)
+
 
                 # Ajout des valeurs à la data_list du rapport
-                data_list.append(('Floors_descended', NS_objects))
-                logdevinfo(f"floors_descended: {NS_objects}")
+                data_list.append(('Floors_descended', UID_18_value))
+                logdevinfo(f"floors_descended: {UID_18_value}")
 
 
     # Génération du rapport
