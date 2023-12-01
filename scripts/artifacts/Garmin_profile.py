@@ -3,8 +3,8 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect_profile": {
-        "name": "Garmin_profile",
+    "Garmin_Connect_Profile": {
+        "name": "Garmin_Profile",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -12,12 +12,13 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EaboutData%*'),
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EinformationData%*'),
         "function": "get_garmin_profile"
+
+
 
     }
 }
-
 import plistlib
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
@@ -25,6 +26,10 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
+
+
+
+
 
 
 def resolve_uids(item, objects):
@@ -44,85 +49,57 @@ def resolve_uids(item, objects):
         # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
         return item
 
+
 def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # Liste utilisée pour stocker les données extraites
 
-    utilisateur = []
-    # Conversion des éléments en string
+    # pour chaque élément de la liste files_found, le code convertit l'élément en string
+    liste_tuples = []
     for file_found in files_found:
-            file_found = str(file_found)
-            # Ouverture et chargement du fichier
-            with open(file_found, "rb") as file:
-                plist_data = plistlib.load(file)
+        file_found = str(file_found)
+        # ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
+        # Le fichier est référencé par la variable fp dans le bloc suivant
+
+        with open(file_found, "rb") as fp:
 
 
-                contenu = resolve_uids(plist_data, plist_data['$objects'])
+            plist_data = plistlib.load(fp)
 
-                root = contenu['$top']['root']  # Accéder à la racine
-
-
-                date = root['dateKey']['NS.time']
+            contenu = resolve_uids(plist_data, plist_data['$objects'])
 
 
-                # Accéder à 'valueKey' dans le dictionnaire 'root'
-                value_key = root['valueKey']
+            root = contenu['$top']['root']  # Accéder à la racine
 
-                # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
-                biometric_profile = value_key['biometricProfile']
+            # Accéder à 'valueKey' dans le dictionnaire 'root'
+            value_key = root['valueKey']['userInfo']
 
-                # Récupérer les données de 'biometricProfile'
-                gender = biometric_profile['gender']  # 'MALE'
-                weight = biometric_profile['weight']  # 75000.0
-                height = biometric_profile['height']  # 175.0
-                age = biometric_profile['age']  # 22
-                activity_level = biometric_profile['activityLevel']  # 0
-                vo2_max_running = biometric_profile['vo2MaxRunning']  # 0.0
-                weight = weight/1000
+            dictionnaire = {}
+            for var in root['valueKey']:
+                if var == "userId":
+                    dictionnaire[var] = root['valueKey'][var]
+            for activite in value_key:
 
-                last_device = value_key['lastUsedDevice']
-                lastDeviceUsed = last_device['lastUsedDeviceName']
-                userID = last_device['userProfileNumber']
+                if activite == 'fullName':
+                    dictionnaire[activite] = value_key[activite]
+                if activite == 'location':
+                    dictionnaire[activite] = value_key[activite]
 
-                epoch_offset = datetime(2001, 1, 1).timestamp()
-                adjusted_timestamp = date + epoch_offset
-                date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
-                fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
-                date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
-                date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
+            liste_tuples.append(dictionnaire)
+            print(liste_tuples)
 
-
-                utilisateur1 = {
-                    "Date": date_formatee,
-                    "Genre": gender,
-                    "Poids": weight,
-                    "Taille": height,
-                    "Age": age,
-                    "DernierAppareilUtilisé": lastDeviceUsed,
-                    "UserID": userID
-                }
-                utilisateur.append(utilisateur1)
-
-    # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Profile')
     reports.start_artifact_report(report_folder, 'Garmin_Profile')
     reports.add_script()
-    data_headers = ('Date', 'Genre', 'Poids [Kg]', 'Taille [cm]', 'Age', 'DernierAppareilUtilisé', 'UserID')
+    data_headers = ('UserID', 'Localisation', 'Nom complet')
 
-
-    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in utilisateur], file_found, write_total=False)
+    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], file_found,write_total=False)
 
     reports.end_artifact_report()
 
     # Génère le fichier TSV
     tsvname = 'Garmin_Profile'
-    tsv(report_folder, data_headers, [list(i.values()) for i in utilisateur], tsvname)
+    tsv(report_folder, data_headers, [list(i.values()) for i in liste_tuples], tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Profile'
-    timeline(report_folder, tlactivity, [list(i.values()) for i in utilisateur], data_headers)
-
-
-
-
-
+    timeline(report_folder, tlactivity, [list(i.values()) for i in liste_tuples], data_headers)
