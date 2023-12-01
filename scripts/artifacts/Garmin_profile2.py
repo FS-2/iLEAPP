@@ -3,8 +3,8 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect_5": {
-        "name": "Garmin_profile2",
+    "Garmin_Connect_Profile": {
+        "name": "Garmin_Profile",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "category": "Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EinformationData%*'),
-        "function": "get_garmin_profile2"
+        "function": "get_garmin_profile"
 
 
 
@@ -50,7 +50,7 @@ def resolve_uids(item, objects):
         return item
 
 
-def get_garmin_profile2(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
     # pour chaque élément de la liste files_found, le code convertit l'élément en string
     liste_tuples = []
@@ -86,8 +86,8 @@ def get_garmin_profile2(files_found, report_folder, seeker, wrap_text, timezone_
             liste_tuples.append(dictionnaire)
             print(liste_tuples)
 
-    reports = ArtifactHtmlReport('Garmin_Profile2')
-    reports.start_artifact_report(report_folder, 'Garmin_Profile2')
+    reports = ArtifactHtmlReport('Garmin_Profile')
+    reports.start_artifact_report(report_folder, 'Garmin_Profile')
     reports.add_script()
     data_headers = ('UserID', 'Localisation', 'Nom complet')
 
@@ -96,10 +96,10 @@ def get_garmin_profile2(files_found, report_folder, seeker, wrap_text, timezone_
     reports.end_artifact_report()
 
     # Génère le fichier TSV
-    tsvname = 'Garmin_Profile2'
+    tsvname = 'Garmin_Profile'
     tsv(report_folder, data_headers, [list(i.values()) for i in liste_tuples], tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_Profile2'
+    tlactivity = 'Garmin_Profile'
     timeline(report_folder, tlactivity, [list(i.values()) for i in liste_tuples], data_headers)
