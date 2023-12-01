@@ -47,10 +47,10 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
                 heartRateValues_UID = hearth_data['heartRateValues']
                 NS_data = objects[heartRateValues_UID]
                 NS_objects_1 = NS_data['NS.object']
-                valeur_UID = NS_objects_1[0]
+                valeur_UID = NS_objects_1[root]
                 NS_data_2 = objects[valeur_UID]
                 NS_objects_2 = NS_data_2['NS.objects']
-                valeur_UID_2 = NS_objects_2[1]
+                valeur_UID_2 = NS_objects_2[root]
                 battement = objects[valeur_UID_2]
 
                 # Ajout des valeurs à la data_list du rapport
