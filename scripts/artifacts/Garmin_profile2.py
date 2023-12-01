@@ -60,12 +60,12 @@ def get_garmin_profile2(files_found, report_folder, seeker, wrap_text, timezone_
         # Le fichier est référencé par la variable fp dans le bloc suivant
 
         with open(file_found, "rb") as fp:
-            plist_data = plistlib.load(fp)
+
 
             plist_data = plistlib.load(fp)
 
             contenu = resolve_uids(plist_data, plist_data['$objects'])
-            print(contenu)
+
 
             root = contenu['$top']['root']  # Accéder à la racine
 
@@ -84,6 +84,8 @@ def get_garmin_profile2(files_found, report_folder, seeker, wrap_text, timezone_
                     dictionnaire[activite] = value_key[activite]
 
             liste_tuples.append(dictionnaire)
+            print(liste_tuples)
+
     reports = ArtifactHtmlReport('Garmin_Profile2')
     reports.start_artifact_report(report_folder, 'Garmin_Profile2')
     reports.add_script()
@@ -95,9 +97,9 @@ def get_garmin_profile2(files_found, report_folder, seeker, wrap_text, timezone_
 
     # Génère le fichier TSV
     tsvname = 'Garmin_Profile2'
-    tsv(report_folder, data_headers, liste_tuples, tsvname)
+    tsv(report_folder, data_headers, [list(i.values()) for i in liste_tuples], tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Profile2'
-    timeline(report_folder, tlactivity, liste_tuples, data_headers)
+    timeline(report_folder, tlactivity, [list(i.values()) for i in liste_tuples], data_headers)
