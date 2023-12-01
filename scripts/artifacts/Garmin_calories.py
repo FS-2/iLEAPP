@@ -25,6 +25,7 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
+
 def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
     data_list = []
@@ -84,6 +85,4 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
     #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Calories'
     timeline(report_folder, tlactivity, data_list, data_headers)
-
-
 
