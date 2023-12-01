@@ -94,6 +94,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                         dict_activite[cle] = 'Inconnu'
 
                 dict_activite["Localisation"] = get_loc(dict_activite['startLatitude'], dict_activite['startLongitude'])
+                print(dict_activite)
                 liste_tuples.append(dict_activite)
                 print(liste_tuples)
 
