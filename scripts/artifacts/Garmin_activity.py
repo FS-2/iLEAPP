@@ -26,6 +26,8 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
+import geopy
+from geopy.geocoders import Nominatim
 
 
 
@@ -46,6 +48,14 @@ def resolve_uids(item, objects):
     else:
         # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
         return item
+
+def get_loc(latitude,longitude):
+    geolocator = Nominatim(user_agent="geoapiExercises")
+    location = geolocator.reverse((latitude, longitude), language='en')
+    if location:
+        return location.raw.get('address', {}).get('city', 'City not found')
+    else:
+        return 'Location pas trouvée'
 
 def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
@@ -82,6 +92,8 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
 
                     else:
                         dict_activite[cle] = 'Inconnu'
+
+                dict_activite["Localisation"] = get_loc(dict_activite['startLatitude'], dict_activite['startLongitude'])
                 liste_tuples.append(dict_activite)
                 print(liste_tuples)
 
@@ -90,7 +102,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
     # le report folder est définit dans l'interface graphique de iLEAPP
     reports.start_artifact_report(report_folder, 'Garmin_Activite')
     reports.add_script()
-    data_headers = ("UserID", "Activité", "Calories", "Distance", "Durée", "Début", "maxHR", "maxSpeed", "StartLongitude", "StartLatitude")
+    data_headers = ("UserID", "Activité", "Calories", "Distance [km]", "Durée [min]", "Début", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "Localisation")
 
     reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], file_found, write_total=False)
 

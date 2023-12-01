@@ -106,7 +106,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     reports = ArtifactHtmlReport('Garmin_Profile')
     reports.start_artifact_report(report_folder, 'Garmin_Profile')
     reports.add_script()
-    data_headers = ('Date', 'Genre', 'Poids [Kg]', 'Taille', 'Age', 'DernierAppareilUtilisé', 'UserID')
+    data_headers = ('Date', 'Genre', 'Poids [Kg]', 'Taille [cm]', 'Age', 'DernierAppareilUtilisé', 'UserID')
 
 
     reports.write_artifact_data_table(data_headers, [list(i.values()) for i in utilisateur], file_found, write_total=False)
