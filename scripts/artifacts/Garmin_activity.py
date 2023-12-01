@@ -26,7 +26,7 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
-import geopy
+
 from geopy.geocoders import Nominatim
 
 
