@@ -92,7 +92,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                     graph_image_base64 = base64.b64encode(image_file.read()).decode()
 
                     # Générer le HTML pour afficher l'image encodée en base64
-                    img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Heart Graph" style="width:50%;height:auto;">'
+                    img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Heart Graph" style="width:65%;height:auto;">'
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Image de la carte', img_html))
