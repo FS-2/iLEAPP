@@ -25,6 +25,27 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
+import matplotlib.pyplot as plt
+import base64
+import os
+
+def resolve_uids(item, objects):
+    """
+    Fonction récursive pour résoudre les références UID dans les données plist.
+    """
+    if isinstance(item, plistlib.UID):
+        # Résoudre la référence UID
+        return resolve_uids(objects[item.data], objects)
+    elif isinstance(item, dict):
+        # Résoudre récursivement dans les dictionnaires
+        return {key: resolve_uids(value, objects) for key, value in item.items()}
+    elif isinstance(item, list):
+        # Résoudre récursivement dans les listes
+        return [resolve_uids(value, objects) for value in item]
+    else:
+        # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
+        return item
+
 
 def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
@@ -35,42 +56,83 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
 
             # Ouverture et chargement du fichier plist
             with open(file_found, "rb") as file:
-                contenu = plistlib.load(file)
+                liste = []
+                plist_data = plistlib.load(file)
 
-                # Recherche des valeurs avec les clés associées
-                root = contenu['$top']['root']
-                objects = contenu['$objects']
+                contenu = resolve_uids(plist_data, plist_data['$objects'])
 
-                # Valeurs associées aux rythme cardique
-                allDayHeartRateKey_UID = objects[root]['allDayHeartRateKey']
-                hearth_data = objects[allDayHeartRateKey_UID]
-                heartRateValues_UID = hearth_data['heartRateValues']
-                NS_data = objects[heartRateValues_UID]
-                NS_objects_1 = NS_data['NS.object']
-                valeur_UID = NS_objects_1[root]
-                NS_data_2 = objects[valeur_UID]
-                NS_objects_2 = NS_data_2['NS.objects']
-                valeur_UID_2 = NS_objects_2[root]
-                battement = objects[valeur_UID_2]
+
+                root = contenu['$top']['root']  # Accéder à la racine
+                value_key = root['allDayHeartRateKey']['heartRateValues']['NS.objects']
+
+                # Accéder à 'valueKey' dans le dictionnaire 'root'
+                for i in value_key:
+                    date = i['NS.objects'][0]/1000
+                    date = datetime.utcfromtimestamp(date)
+                    liste.append((date ,i['NS.objects'][1]))
+                dates = [item[0] for item in liste]
+                values = [item[1] for item in liste]
+
+                # Créez le graphique
+                plt.figure(figsize=(10, 6))
+                plt.plot(dates, values, marker='o', linestyle='-')
+                plt.title('Graphique de fréquence cardiaque Garmin')
+                plt.xlabel('Date')
+                plt.ylabel('Fréquence cardiaque')
+                plt.grid(True)
+
+                # Générer le HTML pour afficher l'image encodée en base64
+
+                graph_image_path = os.path.join(report_folder, 'garmin_hearth_graph.png')
+                plt.savefig(graph_image_path)
+                plt.close()
+
+                with open(graph_image_path, "rb") as image_file:
+                    graph_image_base64 = base64.b64encode(image_file.read()).decode()
+
+                # Générer le HTML pour afficher l'image encodée en base64
+                    img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Pay Image" style="width:35%;height:auto;">'
 
                 # Ajout des valeurs à la data_list du rapport
-                data_list.append(('Floors_descended', battement))
-                logdevinfo(f"floors_descended: {battement}")
-
+                data_list.append(('Image de la carte', img_html))
+                logdevinfo(f"'Image de la carte': {img_html}")
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Hearth')
     reports.start_artifact_report(report_folder, 'Garmin_Hearth')
     reports.add_script()
     data_headers = ('Keys', 'Value')
+    reports.write_artifact_data_table(data_headers, liste, file_found)
     reports.write_artifact_data_table(data_headers, data_list, file_found)
-    reports.end_artifact_report()
 
     # Génère le fichier TSV
     tsvname = 'Garmin_Hearth'
-    tsv(report_folder, data_headers, data_list, tsvname)
+    tsv(report_folder, data_headers, liste, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Hearth'
-    timeline(report_folder, tlactivity, data_list, data_headers)
+    timeline(report_folder, tlactivity, liste, data_headers)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

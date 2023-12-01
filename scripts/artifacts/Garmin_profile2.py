@@ -84,7 +84,7 @@ def get_garmin_profile2(files_found, report_folder, seeker, wrap_text, timezone_
                     dictionnaire[activite] = value_key[activite]
 
             liste_tuples.append(dictionnaire)
-            print(liste_tuples)
+
 
     reports = ArtifactHtmlReport('Garmin_Profile2')
     reports.start_artifact_report(report_folder, 'Garmin_Profile2')
