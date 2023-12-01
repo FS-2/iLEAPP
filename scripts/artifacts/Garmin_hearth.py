@@ -42,21 +42,18 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
                 objects = contenu['$objects']
 
                 # Valeurs associées aux rythme cardique
-                allDayHeartRateKey = objects[root]['allDayHeartRateKey']
-                heartRateValues = objects[allDayHeartRateKey]
-                NS_objects = heartRateValues['NS.objects']
-                UID_15_objects = objects[15]['NS.objects']
-                # Trouver l'index de UID(19) dans UID_15_objects
-                index_UID_19 = [idx for idx, obj in enumerate(UID_15_objects) if obj == 'UID(19)'][0]
-                # Accéder à UID(19)
-                UID_19_objects = objects[19]['NS.objects']
-                # Enfin, obtenir la valeur "79" de UID(18)
-                UID_18_value = objects[UID_19_objects[index_UID_19 + 1]]  # +1 pour obtenir la valeur après UID(18)
+                allDayHeartRateKey_UID = objects[root]['allDayHeartRateKey']
+                heartRateValues_UID = [allDayHeartRateKey_UID]['heartRateValues']
+                NS_objects_1 = heartRateValues_UID['NS.objects']
+                valeur_UID = NS_objects_1[0]
+                NS_objects_2 = valeur_UID['NS.objects']
+                battement = NS_objects_2[1]
+
 
 
                 # Ajout des valeurs à la data_list du rapport
-                data_list.append(('Floors_descended', UID_18_value))
-                logdevinfo(f"floors_descended: {UID_18_value}")
+                data_list.append(('Floors_descended', battement))
+                logdevinfo(f"floors_descended: {battement}")
 
 
     # Génération du rapport
