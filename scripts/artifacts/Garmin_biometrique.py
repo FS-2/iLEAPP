@@ -3,8 +3,8 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect_profile": {
-        "name": "Garmin_profile",
+    "Garmin_Connect_Biometrique": {
+        "name": "Garmin_Biometrique",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "category": "Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EaboutData%*'),
-        "function": "get_garmin_profile"
+        "function": "get_garmin_biometrique"
 
     }
 }
@@ -44,7 +44,7 @@ def resolve_uids(item, objects):
         # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
         return item
 
-def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_garmin_biometrique(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
 
     utilisateur = []
@@ -103,8 +103,8 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 utilisateur.append(utilisateur1)
 
     # Génération du rapport
-    reports = ArtifactHtmlReport('Garmin_Profile')
-    reports.start_artifact_report(report_folder, 'Garmin_Profile')
+    reports = ArtifactHtmlReport('Garmin_Biometrique')
+    reports.start_artifact_report(report_folder, 'Garmin_Biometrique')
     reports.add_script()
     data_headers = ('Date', 'Genre', 'Poids [Kg]', 'Taille [cm]', 'Age', 'DernierAppareilUtilisé', 'UserID')
 
@@ -114,12 +114,12 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     reports.end_artifact_report()
 
     # Génère le fichier TSV
-    tsvname = 'Garmin_Profile'
+    tsvname = 'Garmin_Biometrique'
     tsv(report_folder, data_headers, [list(i.values()) for i in utilisateur], tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_Profile'
+    tlactivity = 'Garmin_Biometrique'
     timeline(report_folder, tlactivity, [list(i.values()) for i in utilisateur], data_headers)
 
 
