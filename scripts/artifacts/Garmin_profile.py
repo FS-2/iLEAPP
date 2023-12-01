@@ -83,9 +83,16 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 lastDeviceUsed = last_device['lastUsedDeviceName']
                 userID = last_device['userProfileNumber']
 
+                epoch_offset = datetime(2001, 1, 1).timestamp()
+                adjusted_timestamp = date + epoch_offset
+                date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
+                fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
+                date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
+                date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
+
 
                 utilisateur1 = {
-                    "Date": date,
+                    "Date": date_formatee,
                     "Genre": gender,
                     "Poids": weight,
                     "Taille": height,
