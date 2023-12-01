@@ -3,8 +3,8 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect_4": {
-        "name": "Garmin_activité",
+    "Garmin_Connect_5": {
+        "name": "Garmin_profile2",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -12,8 +12,8 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Application",
         "notes": "",
-        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%*'),
-        "function": "get_garmin_activite"
+        "paths": ('*/private/var/mobile/Containers/Data/Application/*/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EinformationData%*'),
+        "function": "get_garmin_profile2"
 
 
 
@@ -50,7 +50,7 @@ def resolve_uids(item, objects):
         return item
 
 
-def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_garmin_profile2(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
     # pour chaque élément de la liste files_found, le code convertit l'élément en string
     liste_tuples = []
@@ -62,50 +62,42 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
         with open(file_found, "rb") as fp:
             plist_data = plistlib.load(fp)
 
+            plist_data = plistlib.load(fp)
+
             contenu = resolve_uids(plist_data, plist_data['$objects'])
+            print(contenu)
 
             root = contenu['$top']['root']  # Accéder à la racine
 
             # Accéder à 'valueKey' dans le dictionnaire 'root'
-            value_key = root['valueKey']
+            value_key = root['valueKey']['userInfo']
 
-            # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
+            dictionnaire = {}
+            for var in root['valueKey']:
+                if var == "userId":
+                    dictionnaire[var] = root['valueKey'][var]
+            for activite in value_key:
 
-            for activite in value_key['NS.objects']:
-                dict_activite = {}
-                for cle in ['ownerId','activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR',
-                            'maxSpeed', 'startLongitude', 'startLatitude']:
-                    if cle in activite['NS.keys']:
-                        index = activite['NS.keys'].index(cle)
-                        dict_activite[cle] = activite['NS.objects'][index]  # Ajoutez la valeur au dictionnaire
-                        if cle == 'distance':
-                            dict_activite[cle] = activite['NS.objects'][index]/1000
-                        if cle == 'duration':
-                            dict_activite[cle] = activite['NS.objects'][index]/60
+                if activite == 'fullName':
+                    dictionnaire[activite] = value_key[activite]
+                if activite == 'location':
+                    dictionnaire[activite] = value_key[activite]
 
-                    else:
-                        dict_activite[cle] = 'Inconnu'
-
-
-                liste_tuples.append(dict_activite)
-                print(liste_tuples)
-
-
-    reports = ArtifactHtmlReport('Garmin_Activité')
-    # le report folder est définit dans l'interface graphique de iLEAPP
-    reports.start_artifact_report(report_folder, 'Garmin_Activite')
+            liste_tuples.append(dictionnaire)
+    reports = ArtifactHtmlReport('Garmin_Profile2')
+    reports.start_artifact_report(report_folder, 'Garmin_Profile2')
     reports.add_script()
-    data_headers = ("UserID", "Activité", "Calories", "Distance [km]", "Durée [min]", "Début", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude")
+    data_headers = ('UserID', 'Localisation', 'Nom complet')
 
-    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], file_found, write_total=False)
+    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], file_found,write_total=False)
 
-    # génère le fichier TSV
-    tsvname = 'Garmin_Activité'
+    reports.end_artifact_report()
+
+    # Génère le fichier TSV
+    tsvname = 'Garmin_Profile2'
     tsv(report_folder, data_headers, liste_tuples, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_Activité'
-    #timeline(report_folder, tlactivity, liste_tuples, data_headers)
-
-    reports.end_artifact_report()
+    tlactivity = 'Garmin_Profile2'
+    timeline(report_folder, tlactivity, liste_tuples, data_headers)

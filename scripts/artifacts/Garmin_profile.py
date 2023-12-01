@@ -46,7 +46,7 @@ def resolve_uids(item, objects):
 
 def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
-    data_list = []
+
     utilisateur = []
     # Conversion des éléments en string
     for file_found in files_found:
@@ -115,12 +115,12 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
 
     # Génère le fichier TSV
     tsvname = 'Garmin_Profile'
-    tsv(report_folder, data_headers, data_list, tsvname)
+    tsv(report_folder, data_headers, utilisateur, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Profile'
-    timeline(report_folder, tlactivity, data_list, data_headers)
+    timeline(report_folder, tlactivity, utilisateur, data_headers)
 
 
 
