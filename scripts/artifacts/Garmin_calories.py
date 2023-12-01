@@ -2,11 +2,9 @@
 # Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
 # Date: 05.12.2023
 
-
-
 __artifacts_v2__ = {
-    "Garmin_Connect": {
-        "name": "Garmin Connect",
+    "Garmin_Connect_Calories": {
+        "name": "Garmin Connect Calories",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -18,96 +16,74 @@ __artifacts_v2__ = {
         "function": "get_garmin_calories"
     }
 }
-            #peut avoir plusieurs paths car tuple
-
-
-
 
 import plistlib
+
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
 import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
-
-#on définit la fonction get_garmin
-#paramètres sont utilisés pour traiter des fichiers, générer des rapports,
-#rechercher des informations, gérer le formatage du texte et ajuster les décalages de fuseau horaire
-
 def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    #Cette liste sera utilisée pour stocker les données extraites
+    # Liste utilisée pour stocker les données extraites
     data_list = []
-    #pour chaque élément de la liste files_found, le code convertit l'élément en string
+    # Conversion des éléments en string
+    file_found = str(files_found[0])
 
-    for file_found in files_found:
-        file_found = str(file_found)
-        #ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
-        #Le fichier est référencé par la variable fp dans le bloc suivant
+    # Ouverture et chargement du fichier
+    with open(file_found, "rb") as fp:
+        contenu = plistlib.load(fp)
 
-        with open(file_found, "rb") as fp:
-            #charge le contenu du fichier ouvert (plist) et stocke le contenu dans la variable pl.
-            contenu = plistlib.load(fp)
-            # si la clé recherchée est trouvée dans le plist (mettre la clé plist pertinente)
+        # Recherche des valeurs avec les clés associées
+        root = contenu['$top']['root']
+        objects = contenu['$objects']
 
-            root = contenu['$top']['root']
-            objects = contenu['$objects']
-            date_key = objects[root]['dateKey']
-            value_key = objects[root]['valueKey']
+        # Valeurs associées aux calories
+        value_key = objects[root]['valueKey']
+        real_time_calorie_data = objects[value_key]
+        active_calories_key = real_time_calorie_data['activeCaloriesKey']
+        total_calories_key = real_time_calorie_data['totalCaloriesKey']
+        active_calories = objects[active_calories_key]
+        total_calories = objects[total_calories_key]
 
-            # Obtention des valeurs associées aux clés
-            date_value = objects[date_key]['NS.time']
-            real_time_calorie_data = objects[value_key]
+        # Valeurs associées à la date
+        date_key = objects[root]['dateKey']
+        date_value = objects[date_key]['NS.time']
 
-            # Ajouter l'offset pour le 1er janvier 2001
-            epoch_offset = datetime(2001, 1, 1).timestamp()
-            adjusted_timestamp = date_value + epoch_offset
+        # Conversion du format de la date
+        epoch_offset = datetime(2001, 1, 1).timestamp()
+        adjusted_timestamp = date_value + epoch_offset
+        date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
+        fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
+        date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
+        date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
 
-            # Convertir le timestamp en objet datetime
-            date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
-
-            # Appliquer le fuseau horaire (par exemple, UTC+1)
-            fuseau_horaire = pytz.timezone('Europe/Paris')  # Remplacez 'Europe/Paris' par votre fuseau horaire
-            fuseau_horaire = pytz.timezone('Europe/Paris')
-            date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
-
-            # Formater la date au format demandé
-            date_formattee = date_object.strftime('%d.%m.%Y %H:%M:%S')
-
-
-
-            # Accès aux données spécifiques à RealTimeCalorieData
-            active_calories_key = real_time_calorie_data['activeCaloriesKey']
-            total_calories_key = real_time_calorie_data['totalCaloriesKey']
+        # Ajout des valeurs à la data_list du rapport
+        data_list.append(('Date', date_formatee))
+        data_list.append(('Active Calories', active_calories))
+        data_list.append(('Total Calories', total_calories))
+        logdevinfo(f"Date: {date_formatee}")
+        logdevinfo(f"Active Calories: {active_calories}")
+        logdevinfo(f"Total Calories: {total_calories}")
 
 
-            # Obtention des valeurs associées aux clés des calories
-            active_calories = objects[active_calories_key]
-            total_calories = objects[total_calories_key]
-    #génère le rapport HTML
-
-            data_list.append(('Date', date_formattee))
-            data_list.append(('Active Calories', active_calories))
-            data_list.append(('Total Calories', total_calories))
-
-    report = ArtifactHtmlReport('Garmin_dernières calories')
-    #le report folder est définit dans l'interface graphique de iLEAPP
-    report.start_artifact_report(report_folder, 'Garmin_dernières calories')
+    # Génération du rapport
+    report = ArtifactHtmlReport('Garmin_Calories')
+    report.start_artifact_report(report_folder, 'Garmin_Calories')
     report.add_script()
     data_headers = ('Key', 'Values')
     report.write_artifact_data_table(data_headers, data_list, file_found)
+    report.end_artifact_report()
 
-
-    #génère le fichier TSV
-    tsvname = 'Garmin_dernières calories'
+    # Génère le fichier TSV
+    tsvname = 'Garmin_Calories'
     tsv(report_folder, data_headers, data_list, tsvname)
 
     #insérer les enregistrements horodatés dans la timeline
     #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_dernières calories'
+    tlactivity = 'Garmin_Calories'
     timeline(report_folder, tlactivity, data_list, data_headers)
-
-    report.end_artifact_report()
 
 
 
