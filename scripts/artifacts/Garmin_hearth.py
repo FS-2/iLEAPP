@@ -43,7 +43,7 @@ def get_garmin_hearth(files_found, report_folder, seeker, wrap_text, timezone_of
 
                 # Valeurs associées aux rythme cardique
                 allDayHeartRateKey_UID = objects[root]['allDayHeartRateKey']
-                heartRateValues_UID = [allDayHeartRateKey_UID]['heartRateValues']
+                heartRateValues_UID = allDayHeartRateKey_UID['heartRateValues']
                 NS_objects_1 = heartRateValues_UID['NS.objects']
                 valeur_UID = NS_objects_1[0]
                 NS_objects_2 = valeur_UID['NS.objects']
