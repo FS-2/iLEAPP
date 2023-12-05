@@ -78,6 +78,17 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                             dict_activite[cle] = activite['NS.objects'][index]/1000
                         if cle == 'duration':
                             dict_activite[cle] = activite['NS.objects'][index]/60
+                        if cle == 'startTimeLocal':
+                            activite_date_str = activite['NS.objects'][index]
+                            activite_date = datetime.fromisoformat(activite_date_str)
+                            date_timestamp = activite_date.timestamp()
+                            date_object_utc = datetime.utcfromtimestamp(date_timestamp)
+
+                            date_formatee = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
+
+                            start_time = convert_ts_human_to_utc(date_formatee)
+                            start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
+                            dict_activite[cle] = start_time
 
                     else:
                         dict_activite[cle] = 'Inconnu'

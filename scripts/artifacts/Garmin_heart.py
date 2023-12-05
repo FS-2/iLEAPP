@@ -22,7 +22,7 @@ import plistlib
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
 import pytz
-from datetime import datetime
+from datetime import datetime, timezone
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 import plotly.graph_objects as go
@@ -68,8 +68,9 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                 # Accède à 'valueKey' dans le dictionnaire 'root'
                 for i in value_key:
                     date = i['NS.objects'][0]/1000
-                    date = datetime.utcfromtimestamp(date)
-                    date_formatee = date.strftime('%Y-%m-%d %H:%M:%S')
+                    utc_datetime = datetime.fromtimestamp(date, timezone.utc)
+
+                    date_formatee = utc_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
                     start_time = convert_ts_human_to_utc(date_formatee)
                     start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
@@ -100,8 +101,8 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                     img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Heart Graph" style="width:65%;height:auto;">'
 
                     # Ajout des valeurs à la data_list du rapport
-                    data_list.append(('Image de la carte', img_html))
-                    logdevinfo(f"'Image de la carte': {img_html}")
+                    data_list.append(('Graph rythme cardiaque', img_html))
+                    logdevinfo(f"'Graph rythme cardiaque': {img_html}")
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Heart')
