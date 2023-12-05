@@ -47,13 +47,15 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
 
                     # Formatage de la date
                     date_object = datetime.fromisoformat(purchaseDate)
-                    date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
+                    date_formatee = date_object.strftime('%Y-%m-%d %H:%M:%S')
+                    start_time = convert_ts_human_to_utc(date_formatee)
+                    start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Apple ID', apple_id))
-                    data_list.append(('Date de téléchargement de l’application', date_formatee))
+                    data_list.append(('Date de téléchargement de l’application', start_time))
                     logdevinfo(f"'Apple ID': {apple_id}")
-                    logdevinfo(f"'Date de téléchargement de l’application': {date_formatee}")
+                    logdevinfo(f"'Date de téléchargement de l’application': {start_time}")
 
             # Pour le second fichier (json)
             if file_found == files_found[1]:
