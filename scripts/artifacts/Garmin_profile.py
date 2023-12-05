@@ -29,9 +29,6 @@ from scripts.ilapfuncs import timeline
 
 
 
-
-
-
 def resolve_uids(item, objects):
     """
     Fonction récursive pour résoudre les références UID dans les données plist.

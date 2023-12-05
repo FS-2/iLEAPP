@@ -122,7 +122,3 @@ def get_garmin_biometrique(files_found, report_folder, seeker, wrap_text, timezo
     tlactivity = 'Garmin_Biometrique'
     timeline(report_folder, tlactivity, [list(i.values()) for i in utilisateur], data_headers)
 
-
-
-
-

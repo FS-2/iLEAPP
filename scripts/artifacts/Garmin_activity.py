@@ -3,8 +3,8 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect_4": {
-        "name": "Garmin_activité",
+    "Garmin_Connect_Activité": {
+        "name": "Garmin_Activité",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -26,10 +26,6 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
-
-
-
-
 
 
 def resolve_uids(item, objects):
@@ -93,7 +89,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
 
     reports = ArtifactHtmlReport('Garmin_Activité')
     # le report folder est définit dans l'interface graphique de iLEAPP
-    reports.start_artifact_report(report_folder, 'Garmin_Activite')
+    reports.start_artifact_report(report_folder, 'Garmin_Activité')
     reports.add_script()
     data_headers = ("UserID", "Activité", "Calories", "Distance [km]", "Durée [min]", "Début", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude")
 
