@@ -57,7 +57,7 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
         date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
         fuseau_horaire = pytz.timezone('Europe/Paris')  # Spécifier le fuseau horaire pertinent
         date_object = date_object_utc.replace(tzinfo=pytz.utc).astimezone(fuseau_horaire)
-        date_formatee = date_object.strftime('%d.%m.%Y %H:%M:%S')
+        date_formatee = date_object.strftime('%Y-%m-%d %H:%M:%S')
 
         start_time = convert_ts_human_to_utc(date_formatee)
         start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
