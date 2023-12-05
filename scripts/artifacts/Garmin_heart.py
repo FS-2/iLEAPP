@@ -68,6 +68,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                 # Accède à 'valueKey' dans le dictionnaire 'root'
                 for i in value_key:
                     date = i['NS.objects'][0]/1000
+                    date = datetime.utcfromtimestamp(date)
                     date_formatee = date.strftime('%Y-%m-%d %H:%M:%S')
 
                     start_time = convert_ts_human_to_utc(date_formatee)
