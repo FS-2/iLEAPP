@@ -3,14 +3,14 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect_Activité": {
-        "name": "Garmin_Activité",
+    "Garmin_Connect_Activity": {
+        "name": "Garmin_Activity",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
         "date": "2023-11-30",
         "requirements": "none",
-        "category": "Application",
+        "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%*'),
         "function": "get_garmin_activite"
@@ -107,21 +107,21 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
 
 
 
-    reports = ArtifactHtmlReport('Garmin_Activité')
+    reports = ArtifactHtmlReport('Garmin_Activity')
     # le report folder est définit dans l'interface graphique de iLEAPP
-    reports.start_artifact_report(report_folder, 'Garmin_Activité')
+    reports.start_artifact_report(report_folder, 'Garmin_Activity')
     reports.add_script()
-    data_headers = ("UserID", "Activité", "Calories", "Distance [km]", "Durée [min]", "Début", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude")
+    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude")
 
     reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], file_found, write_total=False)
 
     # génère le fichier TSV
-    tsvname = 'Garmin_Activité'
+    tsvname = 'Garmin_Activity'
     tsv(report_folder, data_headers, liste_tuples, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_Activité'
+    tlactivity = 'Garmin_Activity'
     #timeline(report_folder, tlactivity, liste_tuples, data_headers)
 
     reports.end_artifact_report()

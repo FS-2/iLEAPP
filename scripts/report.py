@@ -823,6 +823,16 @@ icon_mappings = \
         'SAMSUNG WIPE RECOVERY HISTORY LOG': 'trash-2',
         'default': 'loader',
     },
+    'GARMIN APPLICATION':{
+        'GARMIN_ACTIVITY': 'activity',
+        'GARMIN_PROFILE' : 'user',
+        'GARMIN_HEART': 'heart',
+        'GARMIN_CALORIES': 'thermometer',
+        'GARMIN_PAY': 'credit-card',
+        'GARMIN_FLOORS': 'bar-chart',
+        'GARMIN_TELECHARGEMENT': 'download'
+    }
+
 }
 
 # function that can be run against the list to sort and output to console

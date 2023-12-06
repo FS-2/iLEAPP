@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "version": "1.0",
         "date": "2023-11-30",
         "requirements": "none",
-        "category": "Application",
+        "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EaboutData%*','*/private/var/mobile/Containers/Data/Application/*/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EinformationData%*'),
 

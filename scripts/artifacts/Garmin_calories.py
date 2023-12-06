@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "version": "1.0",
         "date": "2023-12-05",
         "requirements": "none",
-        "category": "Application",
+        "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeCaloriesCacheDataKey'),
         "function": "get_garmin_calories"

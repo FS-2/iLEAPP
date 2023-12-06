@@ -10,7 +10,7 @@ __artifacts_v2__ = {
         "version": "1.0",
         "date": "2023-12-05",
         "requirements": "none",
-        "category": "Application",
+        "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/containers/Bundle/Application/*/iTunesMetadata.plist', '*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.crashlytics.data/com.garmin.connect.mobile/v5/settings/cache-key.json'),
         "function": "get_garmin_telechargement"
