@@ -101,8 +101,8 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                     img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Heart Graph" style="width:65%;height:auto;">'
 
                     # Ajout des valeurs à la data_list du rapport
-                    data_list.append(('Graph rythme cardiaque', img_html))
-                    logdevinfo(f"'Graph rythme cardiaque': {img_html}")
+                    data_list.append(('Graphe rythme cardiaque', img_html))
+                    
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Heart')
