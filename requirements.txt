@@ -25,4 +25,5 @@ pytz
 simplekml
 plotly
 kaleido
+geopy
 

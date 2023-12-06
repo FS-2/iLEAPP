@@ -26,6 +26,7 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
+from geopy import *
 
 
 def resolve_uids(item, objects):
@@ -69,6 +70,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
 
             for activite in value_key['NS.objects']:
                 dict_activite = {}
+                liste_loc = []
                 for cle in ['ownerId','activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR',
                             'maxSpeed', 'startLongitude', 'startLatitude']:
                     if cle in activite['NS.keys']:
@@ -78,6 +80,12 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                             dict_activite[cle] = activite['NS.objects'][index]/1000
                         if cle == 'duration':
                             dict_activite[cle] = activite['NS.objects'][index]/60
+                        if cle =='startLongitude':
+                            liste_loc.append(activite['NS.objects'][index])
+                        if cle =='startLatitude':
+                            liste_loc.append(activite['NS.objects'][index])
+
+
                         if cle == 'startTimeLocal':
                             activite_date_str = activite['NS.objects'][index]
 
@@ -101,6 +109,12 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
 
                     else:
                         dict_activite[cle] = 'Inconnu'
+                if len(liste_loc) !=0:
+                    geolocator = Nominatim(user_agent="geoapiExercises")
+                    location = geolocator.reverse((liste_loc[1], liste_loc[0]))
+                    dict_activite["Adresse"] = location
+                else:
+                    dict_activite["Adresse"] = "Inconnu"
 
 
                 liste_tuples.append(dict_activite)
@@ -111,7 +125,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
     # le report folder est définit dans l'interface graphique de iLEAPP
     reports.start_artifact_report(report_folder, 'Garmin_Activity')
     reports.add_script()
-    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude")
+    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "adress")
 
     reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], file_found, write_total=False)
 
