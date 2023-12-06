@@ -81,7 +81,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                         if cle == 'startTimeLocal':
                             activite_date_str = activite['NS.objects'][index]
                             if activite_date_str.endswith('.0'):
-                                activite_date_str = activite_date_str[:-2] + '+00:00'
+                                activite_date_str = activite_date_str[:-1] + '+00:00'
 
                             # Gérer les secondes avec une décimal
                             if '.' in activite_date_str:
