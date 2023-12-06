@@ -23,4 +23,6 @@ python-magic-bin==0.4.14; platform_system == "Darwin"
 python-magic; platform_system == "Darwin" and platform_machine == "arm64"
 pytz
 simplekml
+plotly
+kaleido
 
