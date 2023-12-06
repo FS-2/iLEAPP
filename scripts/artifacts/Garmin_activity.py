@@ -80,10 +80,10 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                             dict_activite[cle] = activite['NS.objects'][index]/60
                         if cle == 'startTimeLocal':
                             activite_date_str = activite['NS.objects'][index]
-                            if activite_date_str.endswith('Z'):
-                                activite_date_str = activite_date_str[:-1] + '+00:00'
+                            if activite_date_str.endswith('.0'):
+                                activite_date_str = activite_date_str[:-2] + '+00:00'
 
-                            # Gérer les secondes avec une décimale
+                            # Gérer les secondes avec une décimal
                             if '.' in activite_date_str:
                                 parts = activite_date_str.split('.')
                                 activite_date_str = parts[0] + '.' + parts[1][:6]
