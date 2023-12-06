@@ -46,6 +46,13 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
                     purchaseDate = contenu['com.apple.iTunesStore.downloadInfo']['purchaseDate']
 
                     # Formatage de la date
+                    if purchaseDate.endswith('Z'):
+                        purchaseDate = purchaseDate[:-1] + '+00:00'
+
+                    # Gérer les secondes avec une décimale
+                    if '.' in purchaseDate:
+                        parts = purchaseDate.split('.')
+                        purchaseDate = parts[0] + '.' + parts[1][:6]  # Garder au maximum 6 chiffres après la décimale
                     date_object = datetime.fromisoformat(purchaseDate)
                     date_formatee = date_object.strftime('%Y-%m-%d %H:%M:%S')
                     start_time = convert_ts_human_to_utc(date_formatee)
