@@ -66,9 +66,7 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
                 data_list.append(('Date', start_time))
                 data_list.append(('Floors_climbed', floors_climbed))
                 data_list.append(('Floors_descended', floors_descended))
-                logdevinfo(f"Date: {date_formatee}")
-                logdevinfo(f"floors_climbed: {floors_climbed}")
-                logdevinfo(f"floors_descended: {floors_descended}")
+                
 
 
     # Génération du rapport

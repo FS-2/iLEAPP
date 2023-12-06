@@ -66,9 +66,7 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
         data_list.append(('Date', start_time))
         data_list.append(('Active Calories', active_calories))
         data_list.append(('Total Calories', total_calories))
-        logdevinfo(f"Date: {start_time}")
-        logdevinfo(f"Active Calories: {active_calories}")
-        logdevinfo(f"Total Calories: {total_calories}")
+
 
 
     # Génération du rapport

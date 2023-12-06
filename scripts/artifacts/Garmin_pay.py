@@ -43,7 +43,7 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
 
             # Ajout des valeurs à la data_list du rapport
             data_list.append(('Image de la carte', img_html))
-            logdevinfo(f"'Image de la carte': {img_html}")
+
 
 
     # Génération du rapport

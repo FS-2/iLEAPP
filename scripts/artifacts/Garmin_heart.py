@@ -102,7 +102,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Graphe rythme cardiaque', img_html))
-                    
+
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Heart')
