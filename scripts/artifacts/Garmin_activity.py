@@ -112,18 +112,14 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
                     else:
                         dict_activite[cle] = 'Unknown'
                 if len(liste_loc) != 0:
-                    try:
+
                         geolocator = Nominatim(user_agent="geoapiExercises")
                         location = geolocator.reverse((liste_loc[1], liste_loc[0]))
                         dict_activite["Adress"] = location
-                    except (GeocoderTimedOut, GeocoderServiceError) as e:
-                        # Handle specific geolocation errors here.
+
+                else:
                         dict_activite["Adress"] = "Unknown"
 
-                    else:
-                        dict_activite["Adress"] = "Unknown"
-                else:
-                    dict_activite["Adress"] = "Unknown"
 
 
                 liste_tuples.append(dict_activite)

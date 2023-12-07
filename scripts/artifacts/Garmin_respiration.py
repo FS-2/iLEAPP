@@ -49,7 +49,7 @@ def resolve_uids(item, objects):
 
 def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
-    data_list = []
+
     # Conversion des éléments en string
     for file_found in files_found:
             file_found = str(file_found)
@@ -96,6 +96,7 @@ def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezo
 
                 # Ouvre l'image
                 with open(graph_image_path, "rb") as image_file:
+                    data_list = []
                     graph_image_base64 = base64.b64encode(image_file.read()).decode()
 
                     # Générer le HTML pour afficher l'image encodée en base64
