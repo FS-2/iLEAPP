@@ -78,6 +78,8 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                         dict_activite[cle] = activite['NS.objects'][index]  # Ajoutez la valeur au dictionnaire
                         if cle == 'distance':
                             dict_activite[cle] = activite['NS.objects'][index]/1000
+                        if cle == 'maxSpeed':
+                            dict_activite[cle] = activite['NS.objects'][index]*(3.6)
                         if cle == 'duration':
                             dict_activite[cle] = activite['NS.objects'][index]/60
                         if cle =='startLongitude':
@@ -134,8 +136,8 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
     tsv(report_folder, data_headers, liste_tuples, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
-    # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
+    #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Activity'
-    #timeline(report_folder, tlactivity, liste_tuples, data_headers)
+    timeline(report_folder, tlactivity, liste_tuples, data_headers)
 
     reports.end_artifact_report()
