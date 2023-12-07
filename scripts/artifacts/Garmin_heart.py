@@ -64,6 +64,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
 
                 root = contenu['$top']['root']  # Accéder à la racine
                 value_key = root['allDayHeartRateKey']['heartRateValues']['NS.objects']
+                value_user = root['allDayHeartRateKey']
 
 
                 # Accède à 'valueKey' dans le dictionnaire 'root'
@@ -103,7 +104,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Heart rate graph', img_html))
-
+            liste.insert(0, ("UserId", value_user['userProfilePK']))
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Heart')
