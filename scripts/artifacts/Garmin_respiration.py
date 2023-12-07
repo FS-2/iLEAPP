@@ -64,6 +64,10 @@ def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezo
 
                 root = contenu['$top']['root']  # Accéder à la racine
                 value_key = root['allDayRespirationKey']['respirationValuesArray']['NS.objects']
+                value_user = root['allDayRespirationKey']
+
+
+
 
 
                 # Accède à 'valueKey' dans le dictionnaire 'root'
@@ -85,13 +89,13 @@ def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezo
                 fig.add_trace(go.Scatter(x=dates, y=values, mode='lines+markers', name='Fréquence cardiaque'))
 
                 # Mise en page
-                fig.update_layout(title='Garmin Heart rate graph',
+                fig.update_layout(title='Garmin Respiration graph',
                                   xaxis_title='Date',
-                                  yaxis_title='Heart rate',
+                                  yaxis_title='Respiration',
                                   template='plotly_white')
 
                 # Enregistre le graphique sous forme d'image PNG
-                graph_image_path = os.path.join(report_folder, 'garmin_heart_graph.png')
+                graph_image_path = os.path.join(report_folder, 'garmin_respiration_graph.png')
                 fig.write_image(graph_image_path)
 
                 # Ouvre l'image
@@ -100,17 +104,19 @@ def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezo
                     graph_image_base64 = base64.b64encode(image_file.read()).decode()
 
                     # Générer le HTML pour afficher l'image encodée en base64
-                    img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Heart Graph" style="width:65%;height:auto;">'
+                    img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Respiration Graph" style="width:65%;height:auto;">'
 
                     # Ajout des valeurs à la data_list du rapport
-                    data_list.append(('Heart rate graph', img_html))
+                    data_list.append(('Respiration graph', img_html))
+            liste.insert(0,("UserId", value_user['userProfilePK']))
+
 
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Respiration')
     reports.start_artifact_report(report_folder, 'Garmin_Respiration')
     reports.add_script()
-    data_headers = ('Keys', 'Value')
+    data_headers = ('Date', 'Value')
     reports.write_artifact_data_table(data_headers, liste, file_found)
     reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
 

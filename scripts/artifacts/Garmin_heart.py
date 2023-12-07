@@ -109,7 +109,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
     reports = ArtifactHtmlReport('Garmin_Heart')
     reports.start_artifact_report(report_folder, 'Garmin_Heart')
     reports.add_script()
-    data_headers = ('Keys', 'Value')
+    data_headers = ('Date', 'Value')
     reports.write_artifact_data_table(data_headers, liste, file_found)
     reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
 
