@@ -151,17 +151,17 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
 
     reports.start_artifact_report(report_folder, 'Garmin_Profile')
     reports.add_script()
-    data_headers = ('Date', 'Genre', 'Poids [Kg]', 'Taille [cm]', 'Age', 'DernierAppareilUtilisé', 'UserID')
+    data_headers = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last-used device', 'UserID')
 
 
 
     reports.write_artifact_data_table(data_headers, [list(i.values()) for i in utilisateur], file_found, write_total=False)
 
-    data_header = ('UserID', 'Localisation', 'Nom complet')
+    data_header = ('UserID', 'Localisation', 'Full name')
 
     reports.write_artifact_data_table(data_header, [list(i.values()) for i in liste_tuples], file_found,write_total=False)
 
-    data_head = ('Date', 'Genre', 'Poids [Kg]', 'Taille [cm]', 'Age', 'DernierAppareilUtilisé', 'UserID', 'Localisation', 'Nom complet')
+    data_head = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last-used device', 'UserID', 'Localisation', 'Full name')
     reports.write_artifact_data_table(data_head, [list(i.values()) for i in liste_final], file_found,write_total=False)
 
 

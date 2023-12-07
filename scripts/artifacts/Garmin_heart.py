@@ -84,9 +84,9 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                 fig.add_trace(go.Scatter(x=dates, y=values, mode='lines+markers', name='Fréquence cardiaque'))
 
                 # Mise en page
-                fig.update_layout(title='Graphique de fréquence cardiaque Garmin',
+                fig.update_layout(title='Garmin Heart rate graph',
                                   xaxis_title='Date',
-                                  yaxis_title='Fréquence cardiaque',
+                                  yaxis_title='Heart rate',
                                   template='plotly_white')
 
                 # Enregistre le graphique sous forme d'image PNG
@@ -101,7 +101,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                     img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Heart Graph" style="width:65%;height:auto;">'
 
                     # Ajout des valeurs à la data_list du rapport
-                    data_list.append(('Graphe rythme cardiaque', img_html))
+                    data_list.append(('Heart rate graph', img_html))
 
 
     # Génération du rapport
