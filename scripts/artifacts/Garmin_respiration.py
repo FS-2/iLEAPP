@@ -107,7 +107,7 @@ def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezo
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Respiration')
-    reports.start_artifact_report(report_folder, 'Respiration')
+    reports.start_artifact_report(report_folder, 'Garmin_Respiration')
     reports.add_script()
     data_headers = ('Keys', 'Value')
     reports.write_artifact_data_table(data_headers, liste, file_found)
