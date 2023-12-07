@@ -26,6 +26,7 @@ import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
+import pathlib
 
 
 def resolve_uids(item, objects):
@@ -54,9 +55,11 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     reports = ArtifactHtmlReport('Garmin_Profile')
     for file_found in files_found:
             file_found = str(file_found)
+
             # Ouverture et chargement du fichier
             with open(file_found, "rb") as file:
                 plist_data = plistlib.load(file)
+                p = pathlib.Path(file_found)
 
 
                 contenu = resolve_uids(plist_data, plist_data['$objects'])
@@ -104,7 +107,8 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                         "Taille": height,
                         "Age": age,
                         "DernierAppareilUtilisé": lastDeviceUsed,
-                        "UserID": userID
+                        "UserID": userID,
+                        "Path" : p
                     }
                     utilisateur.append(utilisateur1)
                 except Exception as e:
@@ -127,6 +131,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                             dictionnaire[activite] = value_key[activite]
                         if activite == 'location':
                             dictionnaire[activite] = value_key[activite]
+                    dictionnaire["Path"] = p
 
                     liste_tuples.append(dictionnaire)
 
@@ -142,6 +147,10 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 dictionnaire_fusion = {**i, **j}
                 if 'userId' in dictionnaire_fusion:
                     del dictionnaire_fusion['userId']
+                if "path" in dictionnaire_fusion:
+                    del dictionnaire_fusion['path']
+                if 'Path' in dictionnaire_fusion:
+                    del dictionnaire_fusion['Path']
 
                 liste_final.append(dictionnaire_fusion)
 
@@ -151,18 +160,18 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     description = "profile"
     reports.start_artifact_report(report_folder, 'Garmin_Profile', description)
     reports.add_script()
-    data_headers = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last-used device', 'UserID')
+    data_headers = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last-used device', 'UserID', 'Path')
 
 
 
-    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in utilisateur], file_found, write_total=False)
+    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in utilisateur], "UserProfile%2EaboutData%", write_total=False)
 
-    data_header = ('UserID', 'Localisation', 'Full name')
+    data_header = ('UserID', 'Localisation', 'Full name', 'Path')
 
-    reports.write_artifact_data_table(data_header, [list(i.values()) for i in liste_tuples], file_found,write_total=False)
+    reports.write_artifact_data_table(data_header, [list(i.values()) for i in liste_tuples], 'UserProfile%2EinformationData%',write_total=False)
 
     data_head = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last-used device', 'UserID', 'Localisation', 'Full name')
-    reports.write_artifact_data_table(data_head, [list(i.values()) for i in liste_final], file_found,write_total=False)
+    reports.write_artifact_data_table(data_head, [list(i.values()) for i in liste_final], 'Link between profile',write_total=False)
 
 
 
