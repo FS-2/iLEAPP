@@ -3,8 +3,8 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect_Telechargement": {
-        "name": "Garmin Telechargement",
+    "Garmin_Connect_Download": {
+        "name": "Garmin Download",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/containers/Bundle/Application/*/iTunesMetadata.plist', '*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.crashlytics.data/com.garmin.connect.mobile/v5/settings/cache-key.json'),
-        "function": "get_garmin_telechargement"
+        "function": "get_garmin_download"
 
     }
 }
@@ -27,7 +27,7 @@ from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 
-def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
     data_list = []
     # Conversion des éléments en string
@@ -60,9 +60,9 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Apple ID', apple_id))
-                    data_list.append(('Date de téléchargement de l’application', start_time))
+                    data_list.append(('Application download date', start_time))
                     logdevinfo(f"'Apple ID': {apple_id}")
-                    logdevinfo(f"'Date de téléchargement de l’application': {start_time}")
+                    logdevinfo(f"'Application download date': {start_time}")
 
             # Pour le second fichier (json)
             if file_found == files_found[1]:
@@ -81,18 +81,18 @@ def get_garmin_telechargement(files_found, report_folder, seeker, wrap_text, tim
 
 
     # Génération du rapport
-    reports = ArtifactHtmlReport('Garmin_Telechargement')
-    reports.start_artifact_report(report_folder, 'Garmin_Telechargement')
+    reports = ArtifactHtmlReport('Garmin_Download')
+    reports.start_artifact_report(report_folder, 'Garmin_Download')
     reports.add_script()
     data_headers = ('Keys', 'Value')
     reports.write_artifact_data_table(data_headers, data_list, file_found)
     reports.end_artifact_report()
 
     # Génère le fichier TSV
-    tsvname = 'Garmin_Telechargement'
+    tsvname = 'Garmin_Download'
     tsv(report_folder, data_headers, data_list, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_Telechargement'
+    tlactivity = 'Garmin_Download'
     timeline(report_folder, tlactivity, data_list, data_headers)
