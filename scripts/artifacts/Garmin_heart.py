@@ -76,7 +76,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
 
                     start_time = convert_ts_human_to_utc(date_formatee)
                     start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
-                    liste.append((start_time, i['NS.objects'][1]))
+                    liste.append((start_time, i['NS.objects'][1], value_user['userProfilePK']))
 
                 dates = [item[0] for item in liste]
                 values = [item[1] for item in liste]
@@ -104,13 +104,14 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Heart rate graph', img_html))
-            liste.insert(0, ("UserId", value_user['userProfilePK']))
+
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Heart')
-    reports.start_artifact_report(report_folder, 'Garmin_Heart')
+    description = 'chacal'
+    reports.start_artifact_report(report_folder, 'Garmin_Heart', description)
     reports.add_script()
-    data_headers = ('Date', 'Value')
+    data_headers = ('Date', 'Value', 'userId')
     reports.write_artifact_data_table(data_headers, liste, file_found)
     reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
 

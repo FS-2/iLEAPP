@@ -79,7 +79,7 @@ def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezo
 
                     start_time = convert_ts_human_to_utc(date_formatee)
                     start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
-                    liste.append((start_time, i['value']))
+                    liste.append((start_time, i['value'],value_user['userProfilePK']))
 
                 dates = [item[0] for item in liste]
                 values = [item[1] for item in liste]
@@ -108,15 +108,16 @@ def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezo
 
                     # Ajout des valeurs à la data_list du rapport
                     data_list.append(('Respiration graph', img_html))
-            liste.insert(0,("UserId", value_user['userProfilePK']))
+
 
 
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Respiration')
-    reports.start_artifact_report(report_folder, 'Garmin_Respiration')
+    description = 'ij'
+    reports.start_artifact_report(report_folder, 'Garmin_Respiration', description)
     reports.add_script()
-    data_headers = ('Key', 'Value')
+    data_headers = ('Key', 'Value', 'userid')
     reports.write_artifact_data_table(data_headers, liste, file_found)
     reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
 

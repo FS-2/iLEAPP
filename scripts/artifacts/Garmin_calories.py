@@ -71,7 +71,8 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
 
     # Génération du rapport
     report = ArtifactHtmlReport('Garmin_Calories')
-    report.start_artifact_report(report_folder, 'Garmin_Calories')
+    description = "Calories..."
+    report.start_artifact_report(report_folder, 'Garmin_Calories', description)
     report.add_script()
     data_headers = ('Key', 'Values')
     report.write_artifact_data_table(data_headers, data_list, file_found)

@@ -71,7 +71,8 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Floors')
-    reports.start_artifact_report(report_folder, 'Garmin_Floors')
+    description = "le F coeur sur toi"
+    reports.start_artifact_report(report_folder, 'Garmin_Floors', description)
     reports.add_script()
     data_headers = ('Keys', 'Value')
     reports.write_artifact_data_table(data_headers, data_list, file_found)

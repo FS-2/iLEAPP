@@ -148,8 +148,8 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
 
 
     # Génération du rapport
-
-    reports.start_artifact_report(report_folder, 'Garmin_Profile')
+    description = "profile"
+    reports.start_artifact_report(report_folder, 'Garmin_Profile', description)
     reports.add_script()
     data_headers = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last-used device', 'UserID')
 

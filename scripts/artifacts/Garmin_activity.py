@@ -28,6 +28,7 @@ from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 from geopy import *
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+import pathlib
 
 def resolve_uids(item, objects):
     """
@@ -56,6 +57,7 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
         # ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
         # Le fichier est référencé par la variable fp dans le bloc suivant
 
+
         with open(file_found, "rb") as fp:
             plist_data = plistlib.load(fp)
 
@@ -65,6 +67,8 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
 
             # Accéder à 'valueKey' dans le dictionnaire 'root'
             value_key = root['valueKey']
+            p = pathlib.Path(file_found)
+
 
             # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
 
@@ -120,6 +124,8 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
                 else:
                         dict_activite["Adress"] = "Unknown"
 
+                dict_activite["Chemin"] = p
+
 
 
                 liste_tuples.append(dict_activite)
@@ -128,11 +134,12 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
 
     reports = ArtifactHtmlReport('Garmin_Activity')
     # le report folder est définit dans l'interface graphique de iLEAPP
-    reports.start_artifact_report(report_folder, 'Garmin_Activity')
+    description = "Activité des différents userId"
+    reports.start_artifact_report(report_folder, 'Garmin_Activity',description)
     reports.add_script()
-    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "Adress")
+    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "Adress", "path")
 
-    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], file_found, write_total=False)
+    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], "UserProfile%2EsummarizedActivityData%", write_total=False)
 
     # génère le fichier TSV
     tsvname = 'Garmin_Activity'

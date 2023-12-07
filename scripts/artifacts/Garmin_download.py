@@ -82,7 +82,8 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
 
     # Génération du rapport
     reports = ArtifactHtmlReport('Garmin_Download')
-    reports.start_artifact_report(report_folder, 'Garmin_Download')
+    description = "Downloads"
+    reports.start_artifact_report(report_folder, 'Garmin_Download', description)
     reports.add_script()
     data_headers = ('Keys', 'Value')
     reports.write_artifact_data_table(data_headers, data_list, file_found)
