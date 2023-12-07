@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%*'),
-        "function": "get_garmin_activite"
+        "function": "get_garmin_activity"
 
 
 
@@ -47,7 +47,7 @@ def resolve_uids(item, objects):
         return item
 
 
-def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
     # pour chaque élément de la liste files_found, le code convertit l'élément en string
     liste_tuples = []
@@ -108,20 +108,20 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
                             dict_activite[cle] = start_time
 
                     else:
-                        dict_activite[cle] = 'Inconnu'
+                        dict_activite[cle] = 'Unknown'
                 if len(liste_loc) != 0:
                     try:
                         geolocator = Nominatim(user_agent="geoapiExercises")
                         location = geolocator.reverse((liste_loc[1], liste_loc[0]))
-                        dict_activite["Adresse"] = location
+                        dict_activite["Adress"] = location
                     except (GeocoderTimedOut, GeocoderServiceError) as e:
                         # Handle specific geolocation errors here.
-                        dict_activite["Adresse"] = "Inconnu"
+                        dict_activite["Adress"] = "Unknown"
 
                     else:
-                        dict_activite["Adresse"] = "Inconnu"
+                        dict_activite["Adress"] = "Unknown"
                 else:
-                    dict_activite["Adresse"] = "Inconnu"
+                    dict_activite["Adress"] = "Unknown"
 
 
                 liste_tuples.append(dict_activite)
@@ -132,7 +132,7 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
     # le report folder est définit dans l'interface graphique de iLEAPP
     reports.start_artifact_report(report_folder, 'Garmin_Activity')
     reports.add_script()
-    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "adress")
+    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "Adress")
 
     reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], file_found, write_total=False)
 
