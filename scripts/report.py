@@ -830,7 +830,8 @@ icon_mappings = \
         'GARMIN_CALORIES': 'thermometer',
         'GARMIN_PAY': 'credit-card',
         'GARMIN_FLOORS': 'bar-chart',
-        'GARMIN_TELECHARGEMENT': 'download'
+        'GARMIN_DOWNLOAD': 'download',
+        'GARMIN_RESPIRATION': 'wind'
     }
 
 }
