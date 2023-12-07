@@ -140,11 +140,11 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
 
     # génère le fichier TSV
     tsvname = 'Garmin_Activity'
-    tsv(report_folder, data_headers, liste_tuples, tsvname)
+    tsv(report_folder, data_headers, [list(i.values()) for i in liste_tuples], tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Activity'
-    timeline(report_folder, tlactivity, liste_tuples, data_headers)
+    timeline(report_folder, tlactivity, [list(i.values()) for i in liste_tuples], data_headers)
 
     reports.end_artifact_report()

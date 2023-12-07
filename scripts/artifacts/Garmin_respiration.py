@@ -3,8 +3,8 @@
 # Date: 05.12.2023
 
 __artifacts_v2__ = {
-    "Garmin_Connect_Heart": {
-        "name": "Garmin Heart",
+    "Garmin_Connect_respiration": {
+        "name": "Garmin respiration",
         "description": "Extract information of Garmin Connect application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
@@ -13,7 +13,7 @@ __artifacts_v2__ = {
         "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDaySeverDataHelper%2EallDayTimeline'),
-        "function": "get_garmin_heart"
+        "function": "get_garmin_respiration"
 
     }
 }
@@ -47,7 +47,7 @@ def resolve_uids(item, objects):
         return item
 
 
-def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_offset):
+def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
     data_list = []
     # Conversion des éléments en string
@@ -63,19 +63,19 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
 
 
                 root = contenu['$top']['root']  # Accéder à la racine
-                value_key = root['allDayHeartRateKey']['heartRateValues']['NS.objects']
+                value_key = root['allDayRespirationKey']['respirationValuesArray']['NS.objects']
 
 
                 # Accède à 'valueKey' dans le dictionnaire 'root'
                 for i in value_key:
-                    date = i['NS.objects'][0]/1000
+                    date = i['startTimeGMT']
                     utc_datetime = datetime.fromtimestamp(date, timezone.utc)
 
                     date_formatee = utc_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
                     start_time = convert_ts_human_to_utc(date_formatee)
                     start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
-                    liste.append((start_time, i['NS.objects'][1]))
+                    liste.append((start_time, i['value']))
 
                 dates = [item[0] for item in liste]
                 values = [item[1] for item in liste]
@@ -106,20 +106,20 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
 
 
     # Génération du rapport
-    reports = ArtifactHtmlReport('Garmin_Heart')
-    reports.start_artifact_report(report_folder, 'Garmin_Heart')
+    reports = ArtifactHtmlReport('Garmin_Respiration')
+    reports.start_artifact_report(report_folder, 'Respiration')
     reports.add_script()
     data_headers = ('Keys', 'Value')
     reports.write_artifact_data_table(data_headers, liste, file_found)
     reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
 
     # Génère le fichier TSV
-    tsvname = 'Garmin_Heart'
+    tsvname = 'Garmin_Respiration'
     tsv(report_folder, data_headers, liste, tsvname)
     tsv(report_folder, data_headers, data_list, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_Heart'
+    tlactivity = 'Garmin_Respiration'
     timeline(report_folder, tlactivity, liste, data_headers)
     timeline(report_folder, tlactivity, data_list, data_headers)
