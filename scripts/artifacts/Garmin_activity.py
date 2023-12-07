@@ -27,7 +27,7 @@ from datetime import datetime
 from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 from geopy import *
-
+from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 
 def resolve_uids(item, objects):
     """
@@ -109,10 +109,17 @@ def get_garmin_activite(files_found, report_folder, seeker, wrap_text, timezone_
 
                     else:
                         dict_activite[cle] = 'Inconnu'
-                if len(liste_loc) !=0:
-                    geolocator = Nominatim(user_agent="geoapiExercises")
-                    location = geolocator.reverse((liste_loc[1], liste_loc[0]))
-                    dict_activite["Adresse"] = location
+                if len(liste_loc) != 0:
+                    try:
+                        geolocator = Nominatim(user_agent="geoapiExercises")
+                        location = geolocator.reverse((liste_loc[1], liste_loc[0]))
+                        dict_activite["Adresse"] = location
+                    except (GeocoderTimedOut, GeocoderServiceError) as e:
+                        # Handle specific geolocation errors here.
+                        dict_activite["Adresse"] = "Inconnu"
+
+                    else:
+                        dict_activite["Adresse"] = "Inconnu"
                 else:
                     dict_activite["Adresse"] = "Inconnu"
 
