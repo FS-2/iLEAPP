@@ -34,7 +34,8 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
         file_found = str(file_found)
 
         # Pour le premier fichier (plist xml)
-        if file_found == files_found[0]:
+        #if file_found == files_found[0]:
+        if file_found.endswith('iTunesMetadata.plist'):
 
             # Ouverture et chargement du fichier
             with open(files_found[0], "rb") as file:
@@ -64,7 +65,8 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
                 logdevinfo(f"'Application download date': {start_time}")
 
         # Pour le second fichier (json)
-        if file_found == files_found[1]:
+        #if file_found == files_found[1]:
+        if file_found.endswith('cache-key.json'):
             with open(files_found[1], 'r') as file:
                 content = json.load(file)
 
