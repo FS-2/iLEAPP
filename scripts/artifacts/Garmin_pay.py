@@ -28,24 +28,23 @@ from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 
 def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # Liste utilisée pour stocker les données extraites
+    # List used to store extracted data
     data_list = []
-    # Conversion des éléments en string
+    # Convert elements to string
     for file_found in files_found:
         file_found = str(file_found)
 
-        # Lire l'image et l'encoder en base64
+        # Read the image and encode it in base64
         with open(file_found, "rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode()
-            # Générer le HTML pour afficher l'image encodée en base64
+            # Generate the HTML to display the image encoded in base64
             img_html = f'<img src="data:image/png;base64,{encoded_image}" alt="Garmin Pay Image" style="width:35%;height:auto;">'
 
-            # Ajout des valeurs à la data_list du rapport
+            # Adding values to report data_list
             data_list.append(('Credit card image', img_html))
 
 
-
-    # Génération du rapport
+    # Report generation
     report = ArtifactHtmlReport('Garmin Pay')
     description = "Credit card information"
     report.start_artifact_report(report_folder, 'Garmin_Pay', description)
@@ -54,11 +53,11 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
     report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
     report.end_artifact_report()
 
-    # Génère le fichier TSV
+    # Generates TSV file
     tsvname = 'Garmin_Pay'
     tsv(report_folder, data_headers, data_list, tsvname)
 
-    # insérer les enregistrements horodatés dans la timeline
-    # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
+    # insert time-stamped records in timeline
+    # (the first column of the table will be used to time-stamp the event)
     tlactivity = 'Garmin_Pay'
     timeline(report_folder, tlactivity, data_list, data_headers)

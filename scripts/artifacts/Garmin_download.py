@@ -33,55 +33,53 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
     for file_found in files_found:
         file_found = str(file_found)
 
-        # Pour le premier fichier (plist xml)
-        #if file_found == files_found[0]:
+        # For the first file (plist xml format)
         if file_found.endswith('iTunesMetadata.plist'):
 
-            # Ouverture et chargement du fichier
-            with open(files_found[0], "rb") as file:
+            # Opening and loading the file
+            with open(files_found[0], "rb") as file:   #CHAAAAAANGER
                 content = plistlib.load(file)
 
-                # Recherche des valeurs avec les clés associées
+                # Search for values with associated keys
                 apple_id = content['com.apple.iTunesStore.downloadInfo']['accountInfo']['AppleID']
                 purchaseDate = content['com.apple.iTunesStore.downloadInfo']['purchaseDate']
 
-                # Formatage de la date
+                # Date format conversion
                 if purchaseDate.endswith('Z'):
                     purchaseDate = purchaseDate[:-1] + '+00:00'
 
-                # Gérer les secondes avec une décimale
+                # Manage seconds with a decimal
                 if '.' in purchaseDate:
                     parts = purchaseDate.split('.')
-                    purchaseDate = parts[0] + '.' + parts[1][:6]  # Garder au maximum 6 chiffres après la décimale
+                    purchaseDate = parts[0] + '.' + parts[1][:6]  # Keep maximum 6 digits after decimal
                 date_object = datetime.fromisoformat(purchaseDate)
                 formatted_date = date_object.strftime('%Y-%m-%d %H:%M:%S')
                 start_time = convert_ts_human_to_utc(formatted_date)
                 start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
 
-                # Ajout des valeurs à la data_list du rapport
+                # Adding values to report data_list
                 data_list.append(('Apple ID', apple_id))
                 data_list.append(('Application download date', start_time))
                 logdevinfo(f"'Apple ID': {apple_id}")
                 logdevinfo(f"'Application download date': {start_time}")
 
-        # Pour le second fichier (json)
-        #if file_found == files_found[1]:
+        # For the second file (json format)
         if file_found.endswith('cache-key.json'):
             with open(files_found[1], 'r') as file:
                 content = json.load(file)
 
-                # Recherche des valeurs avec les clés associées
+                # Search for values with associated keys
                 app_version = content['app_version']
                 google_app_id = content['google_app_id']
 
-                # Ajout des valeurs à la data_list du rapport
+                # Adding values to report data_list
                 data_list.append(('App version', app_version))
                 data_list.append(('App ID', google_app_id))
                 logdevinfo(f"'App version': {app_version}")
                 logdevinfo(f"'App ID': {google_app_id}")
 
 
-    # Génération du rapport
+    # Report generation
     report = ArtifactHtmlReport('Garmin Download')
     description = "Information about the Garmin Connect Application"
     report.start_artifact_report(report_folder, 'Garmin_Download', description)
@@ -90,11 +88,11 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
     report.write_artifact_data_table(data_headers, data_list, file_found)
     report.end_artifact_report()
 
-    # Génère le fichier TSV
+    # Generates TSV file
     tsvname = 'Garmin_Download'
     tsv(report_folder, data_headers, data_list, tsvname)
 
-    # insérer les enregistrements horodatés dans la timeline
-    # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
+    # insert time-stamped records in timeline
+    # (the first column of the table will be used to time-stamp the event)
     tlactivity = 'Garmin_Download'
     timeline(report_folder, tlactivity, data_list, data_headers)
