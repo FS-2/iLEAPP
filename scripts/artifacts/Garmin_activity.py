@@ -27,46 +27,51 @@ from geopy import *
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 import pathlib
 
+#Function to simplify data storage (resolve UIDs)
 def resolve_uids(item, objects):
     """
     Fonction récursive pour résoudre les références UID dans les données plist.
     """
     if isinstance(item, plistlib.UID):
-        # Résoudre la référence UID
+
         return resolve_uids(objects[item.data], objects)
     elif isinstance(item, dict):
-        # Résoudre récursivement dans les dictionnaires
+
         return {key: resolve_uids(value, objects) for key, value in item.items()}
     elif isinstance(item, list):
-        # Résoudre récursivement dans les listes
+
         return [resolve_uids(value, objects) for value in item]
     else:
-        # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
+
         return item
 
 def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
-    # pour chaque élément de la liste files_found, le code convertit l'élément en string
+    #empty list to add different activities
     data_list = []
+    # for each element in the files_found list, the code converts the element into a string
     for file_found in files_found:
         file_found = str(file_found)
-        # ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
-        # Le fichier est référencé par la variable fp dans le bloc suivant
 
+        # opens the file indicated by file_found in binary mode (indicated by "rb") for reading.
         with open(file_found, "rb") as fp:
             plist_data = plistlib.load(fp)
+            #We simplify the format
             content = resolve_uids(plist_data, plist_data['$objects'])
-            root = content['$top']['root']  # Accéder à la racine
+            # Go to root
+            root = content['$top']['root']
 
-            # Accéder à 'valueKey' dans le dictionnaire 'root'
+            # Access 'valueKey' in the 'root' dictionary
             value_key = root['valueKey']
+            #file path
             path = pathlib.Path(file_found)
 
-            # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
+            # Now access 'biometricProfile' under 'valueKey'.
             for activity in value_key['NS.objects']:
                 dict_activities = {}
                 list_loc = []
-                for key in ['ownerId','activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR',
+                # here we'll search for the keys we want to find their value and for some we'll reformat them
+                for key in ['startTimeLocal','ownerId','activityName', 'calories', 'distance', 'duration',  'maxHR',
                             'maxSpeed', 'startLongitude', 'startLatitude']:
                     if key in activity['NS.keys']:
                         index = activity['NS.keys'].index(key)
@@ -81,12 +86,13 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
                             list_loc.append(activity['NS.objects'][index])
                         if key =='startLatitude':
                             list_loc.append(activity['NS.objects'][index])
+                        # here we reformat the date
                         if key == 'startTimeLocal':
                             activity_date_str = activity['NS.objects'][index]
                             if activity_date_str.endswith('.0'):
                                 activity_date_str = activity_date_str[:-1] + '+01:00'
 
-                            # Gérer les secondes avec une décimal
+
                             if '.' in activity_date_str:
                                 parts = activity_date_str.split('.')
                                 activity_date_str = parts[0] + '.' + parts[1][:6]
@@ -98,9 +104,10 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
                             start_time = convert_ts_human_to_utc(formatted_date)
                             start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
                             dict_activities[key] = start_time
-
+                    # if the key is not known, the value will be unknown
                     else:
                         dict_activities[key] = 'Unknown'
+                # if we have latitude and longitude, we'll look up the address
                 if len(list_loc) != 0:
                     try:
                         geolocator = Nominatim(user_agent="geoapiExercises")
@@ -116,25 +123,25 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
                     dict_activities["Address"] = "Unknown"
 
                 dict_activities["Source File Location"] = path
+
+                # add activity to list
                 data_list.append(dict_activities)
 
-
-
+    # Here we create the HTML report and add our data
     report = ArtifactHtmlReport('Garmin Activity')
-    # le report folder est définit dans l'interface graphique de iLEAPP
+
     description = "Lists the activities performed by the user of the application, as well as the activities performed by the profiles consulted and the users to which he or she has subscribed"
     report.start_artifact_report(report_folder, 'Garmin_Activity', description)
     report.add_script()
-    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "Address", "Source File Location")
+    data_headers = ("Start Date","UserID", "Activity", "Calories", "Distance [km]", "Duration [min]",  "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "Address", "Source File Location")
     report.write_artifact_data_table(data_headers, [list(i.values()) for i in data_list], "See Source File Location column", write_total=False)
     report.end_artifact_report()
 
-    # génère le fichier TSV
+    # generates TSV file
     tsvname = 'Garmin_Activity'
     tsv(report_folder, data_headers, [list(i.values()) for i in data_list], tsvname)
-
-    # insérer les enregistrements horodatés dans la timeline
-    #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
+    # insert time-stamped records in timeline
+    # (the first column of the table will be used to time-stamp the event)
     tlactivity = 'Garmin_Activity'
     timeline(report_folder, tlactivity, [list(i.values()) for i in data_list], data_headers)
 

@@ -26,7 +26,7 @@ from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 import pathlib
 
-
+#Function to simplify data storage (resolve UIDs)
 def resolve_uids(item, objects):
     """
     Fonction récursive pour résoudre les références UID dans les données plist.
@@ -45,44 +45,45 @@ def resolve_uids(item, objects):
         return item
 
 def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # Liste utilisée pour stocker les données extraites
-
+    # List used to store extracted data
     users = []
     data_list = []
-    # Conversion des éléments en string
+    # Convert elements to string
     for file_found in files_found:
         file_found = str(file_found)
 
-        # Ouverture et chargement du fichier
+        # Opening and loading the file
         with open(file_found, "rb") as file:
-            plist_data = plistlib.load(file)
-            path = pathlib.Path(file_found)
 
+            plist_data = plistlib.load(file)
+            # file path
+            path = pathlib.Path(file_found)
+            # Simplify data storage format
             content = resolve_uids(plist_data, plist_data['$objects'])
-            root = content['$top']['root']  # Accéder à la racine
+            # Go to root
+            root = content['$top']['root']
 
             try:
                 date = root['dateKey']['NS.time']
 
-                # Accéder à 'valueKey' dans le dictionnaire 'root'
+                # Access 'valueKey' in the 'root' dictionary
                 value_key = root['valueKey']
 
-                # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
+                # Now access 'biometricProfile' under 'valueKey'.
                 biometric_profile = value_key['biometricProfile']
 
-                # Récupérer les données de 'biometricProfile'
-                gender = biometric_profile['gender']  # 'MALE'
-                weight = biometric_profile['weight']  # 75000.0
-                height = biometric_profile['height']  # 175.0
-                age = biometric_profile['age']  # 22
-                activity_level = biometric_profile['activityLevel']  # 0
-                vo2_max_running = biometric_profile['vo2MaxRunning']  # 0.0
+                # Retrieve 'biometricProfile' data
+                gender = biometric_profile['gender']
+                weight = biometric_profile['weight']
+                height = biometric_profile['height']
+                age = biometric_profile['age']
+                #reformats weight
                 weight = weight/1000
 
                 last_device = value_key['lastUsedDevice']
                 lastDeviceUsed = last_device['lastUsedDeviceName']
                 userID = last_device['userProfileNumber']
-
+                #reformate the date
                 epoch_offset = datetime(2001, 1, 1).timestamp()
                 adjusted_timestamp = date + epoch_offset
                 date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
@@ -91,7 +92,7 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                 start_time = convert_ts_human_to_utc(formatted_date)
                 start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
 
-
+                #create a dictionary for each profile_biometric
                 user1 = {
                     "Date": start_time,
                     "Gender": gender,
@@ -102,15 +103,17 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                     "UserID": userID,
                     "Path" : path
                 }
+                #each profile is added to a list
                 users.append(user1)
             except Exception as e:
                 pass
 
             try:
-                # Accéder à 'valueKey' dans le dictionnaire 'root'
+                # Access 'valueKey' in the 'root' dictionary
                 value_key = root['valueKey']['userInfo']
 
                 dictionary = {}
+                #here we retrieve profile information
                 for var in root['valueKey']:
                     if var == "userId":
                         dictionary[var] = root['valueKey'][var]
@@ -120,11 +123,12 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                     if activite == 'location':
                         dictionary[activite] = value_key[activite]
                 dictionary["Path"] = path
+                #add each profile to data_list
                 data_list.append(dictionary)
 
             except Exception as e:
                 pass
-
+    #here we'll link data_list and users if they have the same userid to create a 3rd table
     final_list = []
     for i in users:
         for j in data_list:
@@ -140,7 +144,8 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
 
                 final_list.append(merged_dictionary)
 
-    # Génération du rapport
+    # Report generation
+    #3 talbles in all: one for biometrics, one for profile and one that links the two.
     report = ArtifactHtmlReport('Garmin Profile')
     description = ("User profile information.\n"
                    "The first table contains physical characteristics and the second table contains the full name and location configured by the user. The last table merges the data from the two tables based on the userID.\n"
@@ -158,14 +163,14 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     report.write_artifact_data_table(date_headers_3, [list(i.values()) for i in final_list], 'Link based on userID',write_total=False)
     report.end_artifact_report()
 
-    # Génère le fichier TSV
+    # Generates TSV file
     tsvname = 'Garmin_profile'
     tsv(report_folder, data_headers_1, [list(i.values()) for i in users], tsvname)
     tsv(report_folder, data_headers_2, [list(i.values()) for i in data_list], tsvname)
     tsv(report_folder, date_headers_3, [list(i.values()) for i in final_list], tsvname)
 
-    # insérer les enregistrements horodatés dans la timeline
-    # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
+    # insert time-stamped records in timeline
+    # (the first column of the table will be used to time-stamp the event)
     tlactivity = 'Garmin_profile'
     timeline(report_folder, tlactivity, [list(i.values()) for i in users], data_headers_1)
     timeline(report_folder, tlactivity, [list(i.values()) for i in data_list], data_headers_2)

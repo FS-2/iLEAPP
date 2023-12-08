@@ -27,63 +27,63 @@ from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 
 def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # Liste utilisée pour stocker les données extraites
+    # List used to store extracted data
     data_list = []
-    # Conversion des éléments en string
-    file_found = str(files_found[0])
-
-    # Ouverture et chargement du fichier
-    with open(file_found, "rb") as fp:
-        content = plistlib.load(fp)
-
-        # Recherche des valeurs avec les clés associées
-        root = content['$top']['root']
-        objects = content['$objects']
-
-        # Valeurs associées aux calories
-        value_key = objects[root]['valueKey']
-        real_time_calorie_data = objects[value_key]
-        active_calories_key = real_time_calorie_data['activeCaloriesKey']
-        total_calories_key = real_time_calorie_data['totalCaloriesKey']
-        active_calories = objects[active_calories_key]
-        total_calories = objects[total_calories_key]
-
-        # Valeurs associées à la date
-        date_key = objects[root]['dateKey']
-        date_value = objects[date_key]['NS.time']
-
-        # Conversion du format de la date
-        epoch_offset = datetime(2001, 1, 1).timestamp() #format de date apple
-        adjusted_timestamp = date_value + epoch_offset
-        date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
-
-        formatted_date = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
-
-        start_time = convert_ts_human_to_utc(formatted_date)
-        start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
-
-        # Ajout des valeurs à la data_list du rapport
-        data_list.append(('Date', start_time))
-        data_list.append(('Active Calories', active_calories))
-        data_list.append(('Total Calories', total_calories))
+    # for each element in the files_found list, the code converts the element into a string
+    for file_found in files_found:
+        file_found = str(file_found)
 
 
+        # Opening and loading the file
+        with open(file_found, "rb") as fp:
+            content = plistlib.load(fp)
 
-    # Génération du rapport
-    report = ArtifactHtmlReport('Garmin Calories')
-    description = "Calories burned on last day"
-    report.start_artifact_report(report_folder, 'Garmin_Calories', description)
-    report.add_script()
-    data_headers = ('Key', 'Value')
-    report.write_artifact_data_table(data_headers, data_list, file_found)
-    report.end_artifact_report()
+            # Search for values with associated keys
+            root = content['$top']['root']
+            objects = content['$objects']
 
-    # Génère le fichier TSV
-    tsvname = 'Garmin_Calories'
-    tsv(report_folder, data_headers, data_list, tsvname)
+            # search Calorie values
+            value_key = objects[root]['valueKey']
+            real_time_calorie_data = objects[value_key]
+            active_calories_key = real_time_calorie_data['activeCaloriesKey']
+            total_calories_key = real_time_calorie_data['totalCaloriesKey']
+            active_calories = objects[active_calories_key]
+            total_calories = objects[total_calories_key]
 
-    #insérer les enregistrements horodatés dans la timeline
-    #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
-    tlactivity = 'Garmin_Calories'
-    timeline(report_folder, tlactivity, data_list, data_headers)
+            # search Date-related values
+            date_key = objects[root]['dateKey']
+            date_value = objects[date_key]['NS.time']
+
+            # Date format conversion
+            epoch_offset = datetime(2001, 1, 1).timestamp() #format de date apple
+            adjusted_timestamp = date_value + epoch_offset
+            date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
+
+            formatted_date = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
+
+            start_time = convert_ts_human_to_utc(formatted_date)
+            start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
+
+            # Add values to report data_list
+            data_list.append(('Date', start_time))
+            data_list.append(('Active Calories', active_calories))
+            data_list.append(('Total Calories', total_calories))
+
+        # Report generation
+        report = ArtifactHtmlReport('Garmin Calories')
+        description = "Calories burned on last day"
+        report.start_artifact_report(report_folder, 'Garmin_Calories', description)
+        report.add_script()
+        data_headers = ('Key', 'Value')
+        report.write_artifact_data_table(data_headers, data_list, file_found)
+        report.end_artifact_report()
+
+        # Generates TSV file
+        tsvname = 'Garmin_Calories'
+        tsv(report_folder, data_headers, data_list, tsvname)
+
+        # insert time-stamped recordings in timeline
+        # (the first column of the table will be used to time-stamp the event)
+        tlactivity = 'Garmin_Calories'
+        timeline(report_folder, tlactivity, data_list, data_headers)
 

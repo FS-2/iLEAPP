@@ -27,9 +27,9 @@ from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 
 def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # Liste utilisée pour stocker les données extraites
+    # List used to store extracted data
     data_list = []
-    # Conversion des éléments en string
+    # Convert elements to string
     for file_found in files_found:
         file_found = str(file_found)
 

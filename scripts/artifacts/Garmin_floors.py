@@ -26,21 +26,21 @@ from scripts.ilapfuncs import tsv
 from scripts.ilapfuncs import timeline
 
 def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # Liste utilisée pour stocker les données extraites
+    # List used to store extracted data
     data_list = []
-    # Conversion des éléments en string
+    # Convert elements to string
     for file_found in files_found:
         file_found = str(file_found)
 
-        # Ouverture et chargement du fichier
+        # Opening and loading the file
         with open(file_found, "rb") as file:
             content = plistlib.load(file)
 
-            # Recherche des valeurs avec les clés associées
+            # Search for values with associated keys
             root = content['$top']['root']
             objects = content['$objects']
 
-            # Valeurs associées aux étages
+            # search Values associated with floors
             value_key = objects[root]['valueKey']
             floors_data = objects[value_key]
             floors_descended_key = floors_data['floorsDescendedKey']
@@ -48,11 +48,12 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
             floors_descended = objects[floors_descended_key]
             floors_climbed = objects[floors_climbed_key]
 
-            # Valeurs associées à la date
+            # search Date-related values
             date_key = objects[root]['dateKey']
             date_value = objects[date_key]['NS.time']
 
-            # Conversion du format de la date
+            # recherche  Conversion du format de la date
+            # 01.01.2001 car stocker sous format apple
             epoch_offset = datetime(2001, 1, 1).timestamp()
             adjusted_timestamp = date_value + epoch_offset
             date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
@@ -61,14 +62,12 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
             start_time = convert_ts_human_to_utc(formatted_date)
             start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
 
-            # Ajout des valeurs à la data_list du rapport
+            # Add values to report data_list
             data_list.append(('Date', start_time))
             data_list.append(('Floors_climbed', floors_climbed))
             data_list.append(('Floors_descended', floors_descended))
 
-
-
-    # Génération du rapport
+    # Report generation
     report = ArtifactHtmlReport('Garmin Floors')
     description = "Floors climbed and descended on last day"
     report.start_artifact_report(report_folder, 'Garmin_Floors', description)
@@ -77,11 +76,11 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
     report.write_artifact_data_table(data_headers, data_list, file_found)
     report.end_artifact_report()
 
-    # Génère le fichier TSV
+    # Generates TSV file
     tsvname = 'Garmin_Floors'
     tsv(report_folder, data_headers, data_list, tsvname)
 
-    # insérer les enregistrements horodatés dans la timeline
-    # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
+    # insert time-stamped records in timeline
+    # (the first column of the table will be used to time-stamp the event)
     tlactivity = 'Garmin_Floors'
     timeline(report_folder, tlactivity, data_list, data_headers)
