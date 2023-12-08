@@ -1,6 +1,6 @@
-# Module Description: Parses Garmin Connect details
+# Module Description: Get information related to credit card
 # Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 05.12.2023
+# Date: 08.12.2023
 
 __artifacts_v2__ = {
     "Garmin_Connect_Pay": {
@@ -24,11 +24,9 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
 import pytz
 from datetime import datetime
-from scripts.ilapfuncs import tsv
-from scripts.ilapfuncs import timeline
 
 def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # List used to store extracted data
+    # Create an empty list to store extracted data
     data_list = []
     # Convert elements to string
     for file_found in files_found:
@@ -43,8 +41,7 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
             # Adding values to report data_list
             data_list.append(('Credit card image', img_html))
 
-
-    # Report generation
+    # Generates report
     report = ArtifactHtmlReport('Garmin Pay')
     description = "Credit card information"
     report.start_artifact_report(report_folder, 'Garmin_Pay', description)
@@ -53,11 +50,6 @@ def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offse
     report.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
     report.end_artifact_report()
 
-    # Generates TSV file
-    tsvname = 'Garmin_Pay'
-    tsv(report_folder, data_headers, data_list, tsvname)
+    # No TSV file is generated because the table contains base64 images (unreadable)
 
-    # insert time-stamped records in timeline
-    # (the first column of the table will be used to time-stamp the event)
-    tlactivity = 'Garmin_Pay'
-    timeline(report_folder, tlactivity, data_list, data_headers)
+    # Nothing is inserted in timeline because there are no time-stamped records

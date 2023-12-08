@@ -1,6 +1,6 @@
-# Module Description: Parses Garmin Connect details
+# Module Description: Get information related to calories burned on last day
 # Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 05.12.2023
+# Date: 08.12.2023
 
 __artifacts_v2__ = {
     "Garmin_Connect_Calories": {
@@ -18,21 +18,18 @@ __artifacts_v2__ = {
 }
 
 import plistlib
-
 from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
 import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
-from scripts.ilapfuncs import timeline
 
 def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # List used to store extracted data
+    # Create an empty list to store extracted data
     data_list = []
-    # for each element in the files_found list, the code converts the element into a string
+    # Convert elements to string
     for file_found in files_found:
         file_found = str(file_found)
-
 
         # Opening and loading the file
         with open(file_found, "rb") as fp:
@@ -42,7 +39,7 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
             root = content['$top']['root']
             objects = content['$objects']
 
-            # search Calorie values
+            # Search Calorie values
             value_key = objects[root]['valueKey']
             real_time_calorie_data = objects[value_key]
             active_calories_key = real_time_calorie_data['activeCaloriesKey']
@@ -50,7 +47,7 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
             active_calories = objects[active_calories_key]
             total_calories = objects[total_calories_key]
 
-            # search Date-related values
+            # Search Date-related values
             date_key = objects[root]['dateKey']
             date_value = objects[date_key]['NS.time']
 
@@ -65,12 +62,12 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
             start_time = convert_ts_human_to_utc(formatted_date)
             start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
 
-            # Add values to report data_list
+            # Adds values to report data_list
             data_list.append(('Date', start_time))
             data_list.append(('Active Calories', active_calories))
             data_list.append(('Total Calories', total_calories))
 
-        # Report generation
+        # Generates report
         report = ArtifactHtmlReport('Garmin Calories')
         description = "Calories burned on last day"
         report.start_artifact_report(report_folder, 'Garmin_Calories', description)
@@ -83,8 +80,5 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
         tsvname = 'Garmin_Calories'
         tsv(report_folder, data_headers, data_list, tsvname)
 
-        # insert time-stamped recordings in timeline
-        # (the first column of the table will be used to time-stamp the event)
-        tlactivity = 'Garmin_Calories'
-        timeline(report_folder, tlactivity, data_list, data_headers)
+        # Nothing is inserted in timeline because there are no time-stamped records
 

@@ -1,6 +1,8 @@
-# Module Description: Parses Garmin Connect details
+# Module Description: Get information related to heart rate on last day
+# Requirements: pip install plotly (To create a graph)
+#               pip install kaleido (To export a static image from plotly)
 # Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 05.12.2023
+# Date: 08.12.2023
 
 __artifacts_v2__ = {
     "Garmin_Connect_Heart": {
@@ -28,9 +30,8 @@ import plotly.graph_objects as go
 import base64
 import os
 
-#Function to simplify data storage (resolve UIDs)
+# Function to simplify data storage (resolve UIDs)
 def resolve_uids(item, objects):
-
     if isinstance(item, plistlib.UID):
         return resolve_uids(objects[item.data], objects)
     elif isinstance(item, dict):
@@ -40,9 +41,8 @@ def resolve_uids(item, objects):
     else:
         return item
 
-
 def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # List used to store extracted data
+    # Create an empty list to store extracted data
     data_list = []
     # Convert elements to string
     for file_found in files_found:
@@ -53,7 +53,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
             list = []
             plist_data = plistlib.load(file)
 
-            content = resolve_uids(plist_data, plist_data['$objects']) #Simplify data storage format
+            content = resolve_uids(plist_data, plist_data['$objects']) # Simplify data storage format
             root = content['$top']['root']  # Go to root
 
             value_key = root['allDayHeartRateKey']['heartRateValues']['NS.objects']
@@ -68,10 +68,9 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                 start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
                 list.append((start_time, i['NS.objects'][1], value_user['userProfilePK']))
 
+            # Creates graph with dates and values
             dates = [item[0] for item in list]
             values = [item[1] for item in list]
-
-            # Create graph
             fig = go.Figure()
             fig.add_trace(go.Scatter(x=dates, y=values, mode='lines+markers', name='Fréquence cardiaque'))
 
@@ -95,7 +94,7 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
                 # Add values to report data_list
                 data_list.append(('Heart Rate Graph', img_html))
 
-    # Report generation
+    # Generates report
     report = ArtifactHtmlReport('Garmin Heart')
     description = 'Heart rate on last day (measured every two minutes)'
     report.start_artifact_report(report_folder, 'Garmin_Heart', description)
@@ -107,10 +106,11 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
     report.end_artifact_report()
 
     # Generates TSV file
+    # The second table (with headers_2) is not generated as a TSV file because it contains a base64 image (unreadable)
     tsvname = 'Garmin_Heart'
     tsv(report_folder, data_headers_1, list, tsvname)
 
-    # insert time-stamped records in timeline
+    # Insert time-stamped records in timeline
     # (the first column of the table will be used to time-stamp the event)
     tlactivity = 'Garmin_Heart'
     timeline(report_folder, tlactivity, list, data_headers_1)

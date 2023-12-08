@@ -1,6 +1,6 @@
-# Module Description: Parses Garmin Connect details
+# Module Description: Get information about the Garmin Connect Application
 # Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 05.12.2023
+# Date: 08.12.2023
 
 __artifacts_v2__ = {
     "Garmin_Connect_Download": {
@@ -24,10 +24,9 @@ from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, c
 import pytz
 from datetime import datetime
 from scripts.ilapfuncs import tsv
-from scripts.ilapfuncs import timeline
 
 def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_offset):
-    # List used to store extracted data
+    # Create an empty list to store extracted data
     data_list = []
     # Convert elements to string
     for file_found in files_found:
@@ -48,7 +47,7 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
                 if purchaseDate.endswith('Z'):
                     purchaseDate = purchaseDate[:-1] + '+00:00'
 
-                # Manage seconds with a decimal
+                # Manages seconds with a decimal
                 if '.' in purchaseDate:
                     parts = purchaseDate.split('.')
                     purchaseDate = parts[0] + '.' + parts[1][:6]  # Keep maximum 6 digits after decimal
@@ -79,7 +78,7 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
                 logdevinfo(f"'App ID': {google_app_id}")
 
 
-    # Report generation
+    # Generates report
     report = ArtifactHtmlReport('Garmin Download')
     description = "Information about the Garmin Connect Application"
     report.start_artifact_report(report_folder, 'Garmin_Download', description)
@@ -92,7 +91,4 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
     tsvname = 'Garmin_Download'
     tsv(report_folder, data_headers, data_list, tsvname)
 
-    # insert time-stamped records in timeline
-    # (the first column of the table will be used to time-stamp the event)
-    tlactivity = 'Garmin_Download'
-    timeline(report_folder, tlactivity, data_list, data_headers)
+    # Nothing is inserted in timeline because there are no time-stamped records
