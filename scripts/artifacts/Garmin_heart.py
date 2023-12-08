@@ -30,9 +30,7 @@ import os
 
 #Function to simplify data storage (resolve UIDs)
 def resolve_uids(item, objects):
-    """
-    Fonction récursive pour résoudre les références UID dans les données plist.
-    """
+
     if isinstance(item, plistlib.UID):
         return resolve_uids(objects[item.data], objects)
     elif isinstance(item, dict):
