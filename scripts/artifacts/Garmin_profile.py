@@ -32,16 +32,12 @@ def resolve_uids(item, objects):
     Fonction récursive pour résoudre les références UID dans les données plist.
     """
     if isinstance(item, plistlib.UID):
-        # Résoudre la référence UID
         return resolve_uids(objects[item.data], objects)
     elif isinstance(item, dict):
-        # Résoudre récursivement dans les dictionnaires
         return {key: resolve_uids(value, objects) for key, value in item.items()}
     elif isinstance(item, list):
-        # Résoudre récursivement dans les listes
         return [resolve_uids(value, objects) for value in item]
     else:
-        # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
         return item
 
 def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):

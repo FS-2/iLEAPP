@@ -52,8 +52,8 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
             date_key = objects[root]['dateKey']
             date_value = objects[date_key]['NS.time']
 
-            # recherche  Conversion du format de la date
-            # 01.01.2001 car stocker sous format apple
+            # Conversion of date format
+            # 01.01.2001 because of the apple format (apple epoch)
             epoch_offset = datetime(2001, 1, 1).timestamp()
             adjusted_timestamp = date_value + epoch_offset
             date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)

@@ -55,7 +55,8 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
             date_value = objects[date_key]['NS.time']
 
             # Date format conversion
-            epoch_offset = datetime(2001, 1, 1).timestamp() #format de date apple
+            # 01.01.2001 because of the apple format (apple epoch)
+            epoch_offset = datetime(2001, 1, 1).timestamp()
             adjusted_timestamp = date_value + epoch_offset
             date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
 

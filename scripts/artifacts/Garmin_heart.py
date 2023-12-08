@@ -34,16 +34,12 @@ def resolve_uids(item, objects):
     Fonction récursive pour résoudre les références UID dans les données plist.
     """
     if isinstance(item, plistlib.UID):
-
         return resolve_uids(objects[item.data], objects)
     elif isinstance(item, dict):
-
         return {key: resolve_uids(value, objects) for key, value in item.items()}
     elif isinstance(item, list):
-        # Résoudre récursivement dans les listes
         return [resolve_uids(value, objects) for value in item]
     else:
-
         return item
 
 
