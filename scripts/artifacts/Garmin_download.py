@@ -37,7 +37,7 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
         if file_found.endswith('iTunesMetadata.plist'):
 
             # Opening and loading the file
-            with open(files_found[0], "rb") as file:   #CHAAAAAANGER
+            with open(file_found, "rb") as file:
                 content = plistlib.load(file)
 
                 # Search for values with associated keys
@@ -65,7 +65,7 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
 
         # For the second file (json format)
         if file_found.endswith('cache-key.json'):
-            with open(files_found[1], 'r') as file:
+            with open(file_found, 'r') as file:
                 content = json.load(file)
 
                 # Search for values with associated keys
