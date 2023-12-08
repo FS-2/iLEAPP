@@ -13,9 +13,7 @@ __artifacts_v2__ = {
         "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EaboutData%*','*/private/var/mobile/Containers/Data/Application/*/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EinformationData%*'),
-
         "function": "get_garmin_profile"
-
     }
 }
 
@@ -49,139 +47,127 @@ def resolve_uids(item, objects):
 def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Liste utilisée pour stocker les données extraites
 
-    utilisateur = []
-    liste_tuples=[]
+    users = []
+    data_list = []
     # Conversion des éléments en string
-    reports = ArtifactHtmlReport('Garmin_Profile')
     for file_found in files_found:
-            file_found = str(file_found)
+        file_found = str(file_found)
 
-            # Ouverture et chargement du fichier
-            with open(file_found, "rb") as file:
-                plist_data = plistlib.load(file)
-                p = pathlib.Path(file_found)
+        # Ouverture et chargement du fichier
+        with open(file_found, "rb") as file:
+            plist_data = plistlib.load(file)
+            path = pathlib.Path(file_found)
 
+            content = resolve_uids(plist_data, plist_data['$objects'])
+            root = content['$top']['root']  # Accéder à la racine
 
-                contenu = resolve_uids(plist_data, plist_data['$objects'])
+            try:
+                date = root['dateKey']['NS.time']
 
-                root = contenu['$top']['root']  # Accéder à la racine
+                # Accéder à 'valueKey' dans le dictionnaire 'root'
+                value_key = root['valueKey']
 
-                try:
+                # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
+                biometric_profile = value_key['biometricProfile']
 
+                # Récupérer les données de 'biometricProfile'
+                gender = biometric_profile['gender']  # 'MALE'
+                weight = biometric_profile['weight']  # 75000.0
+                height = biometric_profile['height']  # 175.0
+                age = biometric_profile['age']  # 22
+                activity_level = biometric_profile['activityLevel']  # 0
+                vo2_max_running = biometric_profile['vo2MaxRunning']  # 0.0
+                weight = weight/1000
 
-                    date = root['dateKey']['NS.time']
+                last_device = value_key['lastUsedDevice']
+                lastDeviceUsed = last_device['lastUsedDeviceName']
+                userID = last_device['userProfileNumber']
 
+                epoch_offset = datetime(2001, 1, 1).timestamp()
+                adjusted_timestamp = date + epoch_offset
+                date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
 
-                    # Accéder à 'valueKey' dans le dictionnaire 'root'
-                    value_key = root['valueKey']
-
-                    # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
-                    biometric_profile = value_key['biometricProfile']
-
-                    # Récupérer les données de 'biometricProfile'
-                    gender = biometric_profile['gender']  # 'MALE'
-                    weight = biometric_profile['weight']  # 75000.0
-                    height = biometric_profile['height']  # 175.0
-                    age = biometric_profile['age']  # 22
-                    activity_level = biometric_profile['activityLevel']  # 0
-                    vo2_max_running = biometric_profile['vo2MaxRunning']  # 0.0
-                    weight = weight/1000
-
-                    last_device = value_key['lastUsedDevice']
-                    lastDeviceUsed = last_device['lastUsedDeviceName']
-                    userID = last_device['userProfileNumber']
-
-                    epoch_offset = datetime(2001, 1, 1).timestamp()
-                    adjusted_timestamp = date + epoch_offset
-                    date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
-
-                    date_formatee = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
-                    start_time = convert_ts_human_to_utc(date_formatee)
-                    start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
+                formatted_date = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
+                start_time = convert_ts_human_to_utc(formatted_date)
+                start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
 
 
-                    utilisateur1 = {
-                        "Date": start_time,
-                        "Genre": gender,
-                        "Poids": weight,
-                        "Taille": height,
-                        "Age": age,
-                        "DernierAppareilUtilisé": lastDeviceUsed,
-                        "UserID": userID,
-                        "Path" : p
-                    }
-                    utilisateur.append(utilisateur1)
-                except Exception as e:
-                    pass
+                user1 = {
+                    "Date": start_time,
+                    "Gender": gender,
+                    "Weight": weight,
+                    "Height": height,
+                    "Age": age,
+                    "lastDeviceUsed": lastDeviceUsed,
+                    "UserID": userID,
+                    "Path" : path
+                }
+                users.append(user1)
+            except Exception as e:
+                pass
 
+            try:
+                # Accéder à 'valueKey' dans le dictionnaire 'root'
+                value_key = root['valueKey']['userInfo']
 
+                dictionary = {}
+                for var in root['valueKey']:
+                    if var == "userId":
+                        dictionary[var] = root['valueKey'][var]
+                for activite in value_key:
+                    if activite == 'fullName':
+                        dictionary[activite] = value_key[activite]
+                    if activite == 'location':
+                        dictionary[activite] = value_key[activite]
+                dictionary["Path"] = path
+                data_list.append(dictionary)
 
+            except Exception as e:
+                pass
 
-                try:
-                    # Accéder à 'valueKey' dans le dictionnaire 'root'
-                    value_key = root['valueKey']['userInfo']
-
-                    dictionnaire = {}
-                    for var in root['valueKey']:
-                        if var == "userId":
-                            dictionnaire[var] = root['valueKey'][var]
-                    for activite in value_key:
-
-                        if activite == 'fullName':
-                            dictionnaire[activite] = value_key[activite]
-                        if activite == 'location':
-                            dictionnaire[activite] = value_key[activite]
-                    dictionnaire["Path"] = p
-
-                    liste_tuples.append(dictionnaire)
-
-                except Exception as e:
-                    pass
-
-
-    liste_final = []
-    for i in utilisateur:
-        for j in liste_tuples:
-            dictionnaire_fusion = {}
+    final_list = []
+    for i in users:
+        for j in data_list:
+            merged_dictionary = {}
             if i['UserID'] == j['userId']:
-                dictionnaire_fusion = {**i, **j}
-                if 'userId' in dictionnaire_fusion:
-                    del dictionnaire_fusion['userId']
-                if "path" in dictionnaire_fusion:
-                    del dictionnaire_fusion['path']
-                if 'Path' in dictionnaire_fusion:
-                    del dictionnaire_fusion['Path']
+                merged_dictionary = {**i, **j}
+                if 'userId' in merged_dictionary:
+                    del merged_dictionary['userId']
+                if "path" in merged_dictionary:
+                    del merged_dictionary['path']
+                if 'Path' in merged_dictionary:
+                    del merged_dictionary['Path']
 
-                liste_final.append(dictionnaire_fusion)
-
-
+                final_list.append(merged_dictionary)
 
     # Génération du rapport
-    description = "profile"
-    reports.start_artifact_report(report_folder, 'Garmin_Profile', description)
-    reports.add_script()
-    data_headers = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last-used device', 'UserID', 'Path')
+    report = ArtifactHtmlReport('Garmin Profile')
+    description = ("User profile information.\n"
+                   "The first table contains physical characteristics and the second table contains the full name and location configured by the user. The last table merges the data from the two tables based on the userID.\n"
+                   "Please note that data for several userIDs (user profile, subscriber profiles, viewed profiles) are collected."
+                   )
+    report.start_artifact_report(report_folder, 'Garmin_Profile', description)
+    report.add_script()
+    data_headers_1 = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last used device name', 'UserID', 'Source File Location')
+    report.write_artifact_data_table(data_headers_1, [list(i.values()) for i in users], "See Source File Location column", write_total=False)
 
+    data_headers_2 = ('UserID', 'Location', 'Full name', 'Path')
+    report.write_artifact_data_table(data_headers_2, [list(i.values()) for i in data_list], 'See Source File Location column',write_total=False)
 
-
-    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in utilisateur], "UserProfile%2EaboutData%", write_total=False)
-
-    data_header = ('UserID', 'Localisation', 'Full name', 'Path')
-
-    reports.write_artifact_data_table(data_header, [list(i.values()) for i in liste_tuples], 'UserProfile%2EinformationData%',write_total=False)
-
-    data_head = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last-used device', 'UserID', 'Localisation', 'Full name')
-    reports.write_artifact_data_table(data_head, [list(i.values()) for i in liste_final], 'Link between profile',write_total=False)
-
-
-
+    date_headers_3 = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last used device name', 'UserID', 'Location', 'Full name')
+    report.write_artifact_data_table(date_headers_3, [list(i.values()) for i in final_list], 'Link based on userID',write_total=False)
+    report.end_artifact_report()
 
     # Génère le fichier TSV
     tsvname = 'Garmin_profile'
-    tsv(report_folder, data_headers, [list(i.values()) for i in utilisateur], tsvname)
+    tsv(report_folder, data_headers_1, [list(i.values()) for i in users], tsvname)
+    tsv(report_folder, data_headers_2, [list(i.values()) for i in data_list], tsvname)
+    tsv(report_folder, date_headers_3, [list(i.values()) for i in final_list], tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_profile'
-    timeline(report_folder, tlactivity, [list(i.values()) for i in utilisateur], data_headers)
+    timeline(report_folder, tlactivity, [list(i.values()) for i in users], data_headers_1)
+    timeline(report_folder, tlactivity, [list(i.values()) for i in data_list], data_headers_2)
+    timeline(report_folder, tlactivity, [list(i.values()) for i in final_list], date_headers_3)
 

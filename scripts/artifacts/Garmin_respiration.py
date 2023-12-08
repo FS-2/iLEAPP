@@ -14,7 +14,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDaySeverDataHelper%2EallDayTimeline'),
         "function": "get_garmin_respiration"
-
     }
 }
 
@@ -52,82 +51,75 @@ def get_garmin_respiration(files_found, report_folder, seeker, wrap_text, timezo
 
     # Conversion des éléments en string
     for file_found in files_found:
-            file_found = str(file_found)
+        file_found = str(file_found)
 
-            # Ouverture et chargement du fichier plist
-            with open(file_found, "rb") as file:
-                liste = []
-                plist_data = plistlib.load(file)
+        # Ouverture et chargement du fichier plist
+        with open(file_found, "rb") as file:
+            list = []
+            plist_data = plistlib.load(file)
 
-                contenu = resolve_uids(plist_data, plist_data['$objects'])
+            content = resolve_uids(plist_data, plist_data['$objects'])
+            root = content['$top']['root']  # Accéder à la racine
+            value_key = root['allDayRespirationKey']['respirationValuesArray']['NS.objects']
+            value_user = root['allDayRespirationKey']
 
+            # Accède à 'valueKey' dans le dictionnaire 'root'
+            for i in value_key:
+                date = i['startTimeGMT']
+                utc_datetime = datetime.fromtimestamp(date, timezone.utc)
 
-                root = contenu['$top']['root']  # Accéder à la racine
-                value_key = root['allDayRespirationKey']['respirationValuesArray']['NS.objects']
-                value_user = root['allDayRespirationKey']
+                formatted_date = utc_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
+                start_time = convert_ts_human_to_utc(formatted_date)
+                start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
+                list.append((start_time, i['value'],value_user['userProfilePK']))
 
+            dates = [item[0] for item in list]
+            values = [item[1] for item in list]
 
+            # Crée le graphique
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=dates, y=values, mode='lines+markers', name='Fréquence cardiaque'))
 
+            # Mise en page
+            fig.update_layout(title='Garmin Respiration Rate Graph',
+                                xaxis_title='Date',
+                                yaxis_title='Respiration',
+                                template='plotly_white')
 
-                # Accède à 'valueKey' dans le dictionnaire 'root'
-                for i in value_key:
-                    date = i['startTimeGMT']
-                    utc_datetime = datetime.fromtimestamp(date, timezone.utc)
+            # Enregistre le graphique sous forme d'image PNG
+            graph_image_path = os.path.join(report_folder, 'garmin_respiration_graph.png')
+            fig.write_image(graph_image_path)
 
-                    date_formatee = utc_datetime.strftime('%Y-%m-%d %H:%M:%S')
+            # Ouvre l'image
+            with open(graph_image_path, "rb") as image_file:
+                data_list = []
+                graph_image_base64 = base64.b64encode(image_file.read()).decode()
 
-                    start_time = convert_ts_human_to_utc(date_formatee)
-                    start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
-                    liste.append((start_time, i['value'],value_user['userProfilePK']))
+                # Générer le HTML pour afficher l'image encodée en base64
+                img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Respiration Graph" style="width:65%;height:auto;">'
 
-                dates = [item[0] for item in liste]
-                values = [item[1] for item in liste]
-
-                # Crée le graphique
-                fig = go.Figure()
-                fig.add_trace(go.Scatter(x=dates, y=values, mode='lines+markers', name='Fréquence cardiaque'))
-
-                # Mise en page
-                fig.update_layout(title='Garmin Respiration graph',
-                                  xaxis_title='Date',
-                                  yaxis_title='Respiration',
-                                  template='plotly_white')
-
-                # Enregistre le graphique sous forme d'image PNG
-                graph_image_path = os.path.join(report_folder, 'garmin_respiration_graph.png')
-                fig.write_image(graph_image_path)
-
-                # Ouvre l'image
-                with open(graph_image_path, "rb") as image_file:
-                    data_list = []
-                    graph_image_base64 = base64.b64encode(image_file.read()).decode()
-
-                    # Générer le HTML pour afficher l'image encodée en base64
-                    img_html = f'<img src="data:image/png;base64,{graph_image_base64}" alt="Garmin Respiration Graph" style="width:65%;height:auto;">'
-
-                    # Ajout des valeurs à la data_list du rapport
-                    data_list.append(('Respiration graph', img_html))
-
-
-
+                # Ajout des valeurs à la data_list du rapport
+                data_list.append(('Respiration Rate Graph', img_html))
 
     # Génération du rapport
-    reports = ArtifactHtmlReport('Garmin_Respiration')
-    description = 'ij'
-    reports.start_artifact_report(report_folder, 'Garmin_Respiration', description)
-    reports.add_script()
-    data_headers = ('Key', 'Value', 'userid')
-    reports.write_artifact_data_table(data_headers, liste, file_found)
-    reports.write_artifact_data_table(data_headers, data_list, file_found, html_escape=False)
+    report = ArtifactHtmlReport('Garmin Respiration')
+    description = 'Respiration rate on last day (measured every two minutes)'
+    report.start_artifact_report(report_folder, 'Garmin_Respiration', description)
+    report.add_script()
+    data_headers_1 = ('Date', 'Respiration Rate', 'userid')
+    report.write_artifact_data_table(data_headers_1, list, file_found)
+    data_headers_2 = ('Description', 'Graph')
+    report.write_artifact_data_table(data_headers_2, data_list, file_found, html_escape=False)
+    report.end_artifact_report()
 
     # Génère le fichier TSV
     tsvname = 'Garmin_Respiration'
-    tsv(report_folder, data_headers, liste, tsvname)
-    tsv(report_folder, data_headers, data_list, tsvname)
+    tsv(report_folder, data_headers_1, list, tsvname)
+    #tsv(report_folder, data_headers_1, data_list, tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     # (c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Respiration'
-    timeline(report_folder, tlactivity, liste, data_headers)
-    timeline(report_folder, tlactivity, data_list, data_headers)
+    timeline(report_folder, tlactivity, list, data_headers_1)
+    #timeline(report_folder, tlactivity, data_list, data_headers_1)

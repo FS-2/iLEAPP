@@ -14,9 +14,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/UserProfile%2EsummarizedActivityData%*'),
         "function": "get_garmin_activity"
-
-
-
     }
 }
 import plistlib
@@ -47,107 +44,97 @@ def resolve_uids(item, objects):
         # Retourner l'item tel quel s'il ne s'agit ni d'un UID, ni d'un dictionnaire, ni d'une liste
         return item
 
-
 def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_offset):
 
     # pour chaque élément de la liste files_found, le code convertit l'élément en string
-    liste_tuples = []
+    data_list = []
     for file_found in files_found:
         file_found = str(file_found)
         # ouvre le fichier indiqué par file_found en mode binaire (indiqué par "rb") pour la lecture.
         # Le fichier est référencé par la variable fp dans le bloc suivant
 
-
         with open(file_found, "rb") as fp:
             plist_data = plistlib.load(fp)
-
-            contenu = resolve_uids(plist_data, plist_data['$objects'])
-
-            root = contenu['$top']['root']  # Accéder à la racine
+            content = resolve_uids(plist_data, plist_data['$objects'])
+            root = content['$top']['root']  # Accéder à la racine
 
             # Accéder à 'valueKey' dans le dictionnaire 'root'
             value_key = root['valueKey']
-            p = pathlib.Path(file_found)
-
+            path = pathlib.Path(file_found)
 
             # Maintenant, accédez à 'biometricProfile' sous 'valueKey'
-
-            for activite in value_key['NS.objects']:
-                dict_activite = {}
-                liste_loc = []
-                for cle in ['ownerId','activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR',
+            for activity in value_key['NS.objects']:
+                dict_activities = {}
+                list_loc = []
+                for key in ['ownerId','activityName', 'calories', 'distance', 'duration', 'startTimeLocal', 'maxHR',
                             'maxSpeed', 'startLongitude', 'startLatitude']:
-                    if cle in activite['NS.keys']:
-                        index = activite['NS.keys'].index(cle)
-                        dict_activite[cle] = activite['NS.objects'][index]  # Ajoutez la valeur au dictionnaire
-                        if cle == 'distance':
-                            dict_activite[cle] = activite['NS.objects'][index]/1000
-                        if cle == 'maxSpeed':
-                            dict_activite[cle] = activite['NS.objects'][index]*(3.6)
-                        if cle == 'duration':
-                            dict_activite[cle] = activite['NS.objects'][index]/60
-                        if cle =='startLongitude':
-                            liste_loc.append(activite['NS.objects'][index])
-                        if cle =='startLatitude':
-                            liste_loc.append(activite['NS.objects'][index])
-
-
-                        if cle == 'startTimeLocal':
-                            activite_date_str = activite['NS.objects'][index]
-
-                            if activite_date_str.endswith('.0'):
-                                activite_date_str = activite_date_str[:-1] + '+01:00'
+                    if key in activity['NS.keys']:
+                        index = activity['NS.keys'].index(key)
+                        dict_activities[key] = activity['NS.objects'][index]  # Ajoutez la valeur au dictionnaire
+                        if key == 'distance':
+                            dict_activities[key] = activity['NS.objects'][index]/1000
+                        if key == 'maxSpeed':
+                            dict_activities[key] = activity['NS.objects'][index]*(3.6)
+                        if key == 'duration':
+                            dict_activities[key] = activity['NS.objects'][index]/60
+                        if key =='startLongitude':
+                            list_loc.append(activity['NS.objects'][index])
+                        if key =='startLatitude':
+                            list_loc.append(activity['NS.objects'][index])
+                        if key == 'startTimeLocal':
+                            activity_date_str = activity['NS.objects'][index]
+                            if activity_date_str.endswith('.0'):
+                                activity_date_str = activity_date_str[:-1] + '+01:00'
 
                             # Gérer les secondes avec une décimal
-                            if '.' in activite_date_str:
-                                parts = activite_date_str.split('.')
-                                activite_date_str = parts[0] + '.' + parts[1][:6]
+                            if '.' in activity_date_str:
+                                parts = activity_date_str.split('.')
+                                activity_date_str = parts[0] + '.' + parts[1][:6]
 
-                            activite_date = datetime.fromisoformat(activite_date_str)
-                            date_timestamp = activite_date.timestamp()
+                            activity_date = datetime.fromisoformat(activity_date_str)
+                            date_timestamp = activity_date.timestamp()
                             date_object_utc = datetime.utcfromtimestamp(date_timestamp)
-
-                            date_formatee = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
-
-                            start_time = convert_ts_human_to_utc(date_formatee)
+                            formatted_date = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
+                            start_time = convert_ts_human_to_utc(formatted_date)
                             start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
-                            dict_activite[cle] = start_time
+                            dict_activities[key] = start_time
 
                     else:
-                        dict_activite[cle] = 'Unknown'
-                if len(liste_loc) != 0:
-
+                        dict_activities[key] = 'Unknown'
+                if len(list_loc) != 0:
+                    try:
                         geolocator = Nominatim(user_agent="geoapiExercises")
-                        location = geolocator.reverse((liste_loc[1], liste_loc[0]))
-                        dict_activite["Adress"] = location
-
+                        location = geolocator.reverse((list_loc[1], list_loc[0]))
+                        dict_activities["Address"] = location
+                    except GeocoderTimedOut as e1:
+                        print(f"GeocoderTimedOutError: {e1}")
+                        dict_activities["Address"] = 'Unknown'
+                    except GeocoderServiceError as e2:
+                        print(f"GeocoderServiceError: {e2}")
+                        dict_activities["Address"] = 'Unknown'
                 else:
-                        dict_activite["Adress"] = "Unknown"
+                    dict_activities["Address"] = "Unknown"
 
-                dict_activite["Chemin"] = p
-
-
-
-                liste_tuples.append(dict_activite)
+                dict_activities["Source File Location"] = path
+                data_list.append(dict_activities)
 
 
 
-    reports = ArtifactHtmlReport('Garmin_Activity')
+    report = ArtifactHtmlReport('Garmin Activity')
     # le report folder est définit dans l'interface graphique de iLEAPP
-    description = "Activité des différents userId"
-    reports.start_artifact_report(report_folder, 'Garmin_Activity',description)
-    reports.add_script()
-    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "Adress", "path")
-
-    reports.write_artifact_data_table(data_headers, [list(i.values()) for i in liste_tuples], "UserProfile%2EsummarizedActivityData%", write_total=False)
+    description = "Lists the activities performed by the user of the application, as well as the activities performed by the profiles consulted and the users to which he or she has subscribed"
+    report.start_artifact_report(report_folder, 'Garmin_Activity', description)
+    report.add_script()
+    data_headers = ("UserID", "Activity", "Calories", "Distance [km]", "Duration [min]", "Start Date", "maxHR", "maxSpeed [km/h]", "StartLongitude", "StartLatitude", "Address", "Source File Location")
+    report.write_artifact_data_table(data_headers, [list(i.values()) for i in data_list], "See Source File Location column", write_total=False)
+    report.end_artifact_report()
 
     # génère le fichier TSV
     tsvname = 'Garmin_Activity'
-    tsv(report_folder, data_headers, [list(i.values()) for i in liste_tuples], tsvname)
+    tsv(report_folder, data_headers, [list(i.values()) for i in data_list], tsvname)
 
     # insérer les enregistrements horodatés dans la timeline
     #(c’est la première colonne du tableau qui sera utilisée pour horodater l’événement)
     tlactivity = 'Garmin_Activity'
-    timeline(report_folder, tlactivity, [list(i.values()) for i in liste_tuples], data_headers)
+    timeline(report_folder, tlactivity, [list(i.values()) for i in data_list], data_headers)
 
-    reports.end_artifact_report()

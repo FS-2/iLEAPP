@@ -34,11 +34,11 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
 
     # Ouverture et chargement du fichier
     with open(file_found, "rb") as fp:
-        contenu = plistlib.load(fp)
+        content = plistlib.load(fp)
 
         # Recherche des valeurs avec les clés associées
-        root = contenu['$top']['root']
-        objects = contenu['$objects']
+        root = content['$top']['root']
+        objects = content['$objects']
 
         # Valeurs associées aux calories
         value_key = objects[root]['valueKey']
@@ -57,9 +57,9 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
         adjusted_timestamp = date_value + epoch_offset
         date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
 
-        date_formatee = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
+        formatted_date = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
 
-        start_time = convert_ts_human_to_utc(date_formatee)
+        start_time = convert_ts_human_to_utc(formatted_date)
         start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
 
         # Ajout des valeurs à la data_list du rapport
@@ -70,11 +70,11 @@ def get_garmin_calories(files_found, report_folder, seeker, wrap_text, timezone_
 
 
     # Génération du rapport
-    report = ArtifactHtmlReport('Garmin_Calories')
-    description = "Calories..."
+    report = ArtifactHtmlReport('Garmin Calories')
+    description = "Calories burned on last day"
     report.start_artifact_report(report_folder, 'Garmin_Calories', description)
     report.add_script()
-    data_headers = ('Key', 'Values')
+    data_headers = ('Key', 'Value')
     report.write_artifact_data_table(data_headers, data_list, file_found)
     report.end_artifact_report()
 

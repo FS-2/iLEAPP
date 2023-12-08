@@ -14,7 +14,6 @@ __artifacts_v2__ = {
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDayRealTimeDataService_realTimeFloorsCacheDataKey'),
         "function": "get_garmin_floors"
-
     }
 }
 
@@ -31,52 +30,52 @@ def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_of
     data_list = []
     # Conversion des éléments en string
     for file_found in files_found:
-            file_found = str(file_found)
+        file_found = str(file_found)
 
-            # Ouverture et chargement du fichier
-            with open(file_found, "rb") as file:
-                contenu = plistlib.load(file)
+        # Ouverture et chargement du fichier
+        with open(file_found, "rb") as file:
+            content = plistlib.load(file)
 
-                # Recherche des valeurs avec les clés associées
-                root = contenu['$top']['root']
-                objects = contenu['$objects']
+            # Recherche des valeurs avec les clés associées
+            root = content['$top']['root']
+            objects = content['$objects']
 
-                # Valeurs associées aux étages
-                value_key = objects[root]['valueKey']
-                floors_data = objects[value_key]
-                floors_descended_key = floors_data['floorsDescendedKey']
-                floors_climbed_key = floors_data['floorsClimbedKey']
-                floors_descended = objects[floors_descended_key]
-                floors_climbed = objects[floors_climbed_key]
+            # Valeurs associées aux étages
+            value_key = objects[root]['valueKey']
+            floors_data = objects[value_key]
+            floors_descended_key = floors_data['floorsDescendedKey']
+            floors_climbed_key = floors_data['floorsClimbedKey']
+            floors_descended = objects[floors_descended_key]
+            floors_climbed = objects[floors_climbed_key]
 
-                # Valeurs associées à la date
-                date_key = objects[root]['dateKey']
-                date_value = objects[date_key]['NS.time']
+            # Valeurs associées à la date
+            date_key = objects[root]['dateKey']
+            date_value = objects[date_key]['NS.time']
 
-                # Conversion du format de la date
-                epoch_offset = datetime(2001, 1, 1).timestamp()
-                adjusted_timestamp = date_value + epoch_offset
-                date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
+            # Conversion du format de la date
+            epoch_offset = datetime(2001, 1, 1).timestamp()
+            adjusted_timestamp = date_value + epoch_offset
+            date_object_utc = datetime.utcfromtimestamp(adjusted_timestamp)
 
-                date_formatee = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
-                start_time = convert_ts_human_to_utc(date_formatee)
-                start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
+            formatted_date = date_object_utc.strftime('%Y-%m-%d %H:%M:%S')
+            start_time = convert_ts_human_to_utc(formatted_date)
+            start_time = convert_utc_human_to_timezone(start_time, timezone_offset)
 
-                # Ajout des valeurs à la data_list du rapport
-                data_list.append(('Date', start_time))
-                data_list.append(('Floors_climbed', floors_climbed))
-                data_list.append(('Floors_descended', floors_descended))
+            # Ajout des valeurs à la data_list du rapport
+            data_list.append(('Date', start_time))
+            data_list.append(('Floors_climbed', floors_climbed))
+            data_list.append(('Floors_descended', floors_descended))
 
 
 
     # Génération du rapport
-    reports = ArtifactHtmlReport('Garmin_Floors')
-    description = "le F coeur sur toi"
-    reports.start_artifact_report(report_folder, 'Garmin_Floors', description)
-    reports.add_script()
-    data_headers = ('Keys', 'Value')
-    reports.write_artifact_data_table(data_headers, data_list, file_found)
-    reports.end_artifact_report()
+    report = ArtifactHtmlReport('Garmin Floors')
+    description = "Floors climbed and descended on last day"
+    report.start_artifact_report(report_folder, 'Garmin_Floors', description)
+    report.add_script()
+    data_headers = ('Key', 'Value')
+    report.write_artifact_data_table(data_headers, data_list, file_found)
+    report.end_artifact_report()
 
     # Génère le fichier TSV
     tsvname = 'Garmin_Floors'
