@@ -117,6 +117,8 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
                         dictionary[activite] = value_key[activite]
                     if activite == 'location':
                         dictionary[activite] = value_key[activite]
+                    if activite == "profileImageUrlLarge":
+                        dictionary[activite] = value_key[activite]
                 dictionary["Path"] = path
                 # Adds each profile to data_list
                 data_list.append(dictionary)
@@ -152,10 +154,10 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     data_headers_1 = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last used device name', 'UserID', 'Source File Location')
     report.write_artifact_data_table(data_headers_1, [list(i.values()) for i in users], "See Source File Location column", write_total=False)
 
-    data_headers_2 = ('UserID', 'Location', 'Full name', 'Path')
+    data_headers_2 = ('UserID', 'Location','Profile Picture', 'Full name', 'Path')
     report.write_artifact_data_table(data_headers_2, [list(i.values()) for i in data_list], 'See Source File Location column',write_total=False)
 
-    date_headers_3 = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last used device name', 'UserID', 'Location', 'Full name')
+    date_headers_3 = ('Date', 'Gender', 'Weight [Kg]', 'Size [cm]', 'Age', 'Last used device name', 'UserID', 'Location', 'Profile Picture','Full name')
     report.write_artifact_data_table(date_headers_3, [list(i.values()) for i in final_list], 'Link based on userID',write_total=False)
     report.end_artifact_report()
 
