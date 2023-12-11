@@ -17,13 +17,8 @@ __artifacts_v2__ = {
     }
 }
 
-import plistlib
-import json
 import base64
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
-import pytz
-from datetime import datetime
 
 def get_garmin_pay(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Create an empty list to store extracted data

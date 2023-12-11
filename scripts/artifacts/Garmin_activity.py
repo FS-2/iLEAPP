@@ -17,13 +17,11 @@ __artifacts_v2__ = {
         "function": "get_garmin_activity"
     }
 }
+
 import plistlib
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
-import pytz
+from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone
 from datetime import datetime
-from scripts.ilapfuncs import tsv
-from scripts.ilapfuncs import timeline
 from geopy import *
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 import pathlib
@@ -107,10 +105,10 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
                         location = geolocator.reverse((list_loc[1], list_loc[0]))
                         dict_activities["Address"] = location
                     except GeocoderTimedOut as e1:
-                        print(f"GeocoderTimedOutError: {e1}")
+                        logfunc(f"GeocoderTimedOutError: {e1}")
                         dict_activities["Address"] = 'Unknown'
                     except GeocoderServiceError as e2:
-                        print(f"GeocoderServiceError: {e2}")
+                        logfunc(f"GeocoderServiceError: {e2}")
                         dict_activities["Address"] = 'Unknown'
                 else:
                     dict_activities["Address"] = "Unknown"

@@ -20,10 +20,8 @@ __artifacts_v2__ = {
 import plistlib
 import json
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
-import pytz
+from scripts.ilapfuncs import tsv, convert_ts_human_to_utc, convert_utc_human_to_timezone
 from datetime import datetime
-from scripts.ilapfuncs import tsv
 
 def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Create an empty list to store extracted data
@@ -59,8 +57,7 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
                 # Adding values to report data_list
                 data_list.append(('Apple ID', apple_id))
                 data_list.append(('Application download date', start_time))
-                logdevinfo(f"'Apple ID': {apple_id}")
-                logdevinfo(f"'Application download date': {start_time}")
+
 
         # For the second file (json format)
         if file_found.endswith('cache-key.json'):
@@ -74,9 +71,6 @@ def get_garmin_download(files_found, report_folder, seeker, wrap_text, timezone_
                 # Adding values to report data_list
                 data_list.append(('App version', app_version))
                 data_list.append(('App ID', google_app_id))
-                logdevinfo(f"'App version': {app_version}")
-                logdevinfo(f"'App ID': {google_app_id}")
-
 
     # Generates report
     report = ArtifactHtmlReport('Garmin Download')

@@ -19,11 +19,8 @@ __artifacts_v2__ = {
 
 import plistlib
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
-import pytz
+from scripts.ilapfuncs import tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone
 from datetime import datetime
-from scripts.ilapfuncs import tsv
-from scripts.ilapfuncs import timeline
 import pathlib
 
 #Function to simplify data storage (resolve UIDs)

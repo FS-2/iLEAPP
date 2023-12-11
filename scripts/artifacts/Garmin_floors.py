@@ -19,10 +19,8 @@ __artifacts_v2__ = {
 
 import plistlib
 from scripts.artifact_report import ArtifactHtmlReport
-from scripts.ilapfuncs import logfunc, tsv, timeline, convert_ts_human_to_utc, convert_utc_human_to_timezone, logdevinfo
-import pytz
+from scripts.ilapfuncs import tsv, convert_ts_human_to_utc, convert_utc_human_to_timezone
 from datetime import datetime
-from scripts.ilapfuncs import tsv
 
 def get_garmin_floors(files_found, report_folder, seeker, wrap_text, timezone_offset):
     # Create an empty list to store extracted data
