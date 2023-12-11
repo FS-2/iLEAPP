@@ -1,14 +1,10 @@
-# Module Description: Get information related to credit card
-# Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 08.12.2023
-
 __artifacts_v2__ = {
     "Garmin_Connect_Pay": {
         "name": "Garmin Pay",
-        "description": "Extract information of Garmin Connect application",
+        "description": "Get information related to credit card",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
-        "date": "2023-12-05",
+        "date": "2023-12-12",
         "requirements": "none",
         "category": "Garmin Application",
         "notes": "",

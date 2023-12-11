@@ -1,14 +1,10 @@
-# Module Description: Get information about the Garmin Connect Application
-# Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 08.12.2023
-
 __artifacts_v2__ = {
     "Garmin_Connect_Download": {
         "name": "Garmin Download",
-        "description": "Extract information of Garmin Connect application",
+        "description": "Get information about the Garmin Connect Application",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
-        "date": "2023-12-05",
+        "date": "2023-12-12",
         "requirements": "none",
         "category": "Garmin Application",
         "notes": "",

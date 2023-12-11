@@ -1,14 +1,10 @@
-# Module Description: Get information related to user profile
-# Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 08.12.2023
-
 __artifacts_v2__ = {
     "Garmin_Connect_profile": {
         "name": "Garmin_profile",
-        "description": "Extract informatio of Garmin Connect application",
+        "description": "Get information related to user profile",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
-        "date": "2023-11-30",
+        "date": "2023-12-12",
         "requirements": "none",
         "category": "Garmin Application",
         "notes": "",
@@ -170,4 +166,3 @@ def get_garmin_profile(files_found, report_folder, seeker, wrap_text, timezone_o
     tlactivity = 'Garmin_Profile'
     timeline(report_folder, tlactivity, [list(i.values()) for i in users], data_headers_1)
     timeline(report_folder, tlactivity, [list(i.values()) for i in final_list], date_headers_3)
-

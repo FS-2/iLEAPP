@@ -1,14 +1,10 @@
-# Module Description: Get information related to floors climbed and descended on last day
-# Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 08.12.2023
-
 __artifacts_v2__ = {
     "Garmin_Connect_Floors": {
         "name": "Garmin Floors",
-        "description": "Extract information of Garmin Connect application",
+        "description": "Get information related to floors climbed and descended on last day",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
-        "date": "2023-12-05",
+        "date": "2023-12-12",
         "requirements": "none",
         "category": "Garmin Application",
         "notes": "",

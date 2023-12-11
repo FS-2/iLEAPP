@@ -1,15 +1,15 @@
-# Module Description: Get information related to the user activities
 # Requirements: pip install geopy (To convert latitude and longitude to a readable address)
-# Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 08.12.2023
+# This code use a module (geopy). It uses the Nominatim service, an open source geocoder based on OpenStreetMap data.
+# Nominatim is free, but requires an Internet connection and may have limitations in terms of frequency of use to avoid server overload.
+# To avoid using this service, delete lines 102 to 114, as well as the word "Address" in the 'data_headers' variable on line 127.
 
 __artifacts_v2__ = {
     "Garmin_Connect_Activity": {
         "name": "Garmin_Activity",
-        "description": "Extract information of Garmin Connect application",
+        "description": "Get information related to the user activities",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
-        "date": "2023-11-30",
+        "date": "2023-12-12",
         "requirements": "none",
         "category": "Garmin Application",
         "notes": "",
@@ -136,4 +136,3 @@ def get_garmin_activity(files_found, report_folder, seeker, wrap_text, timezone_
     # (the first column of the table will be used to time-stamp the event)
     tlactivity = 'Garmin_Activity'
     timeline(report_folder, tlactivity, [list(i.values()) for i in data_list], data_headers)
-

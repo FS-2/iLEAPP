@@ -1,17 +1,14 @@
-# Module Description: Get information related to heart rate on last day
 # Requirements: pip install plotly (To create a graph)
 #               pip install kaleido (To export a static image from plotly)
-# Author: Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber
-# Date: 08.12.2023
 
 __artifacts_v2__ = {
     "Garmin_Connect_Heart": {
         "name": "Garmin Heart",
-        "description": "Extract information of Garmin Connect application",
+        "description": "Get information related to heart rate on last day",
         "author": "Romain Christen, Thibaut Frabboni, Theo Hegel, Fabrice Sieber",
         "version": "1.0",
-        "date": "2023-12-05",
-        "requirements": "none",
+        "date": "2023-12-12",
+        "requirements": "plotly, kaleido",
         "category": "Garmin Application",
         "notes": "",
         "paths": ('*/private/var/mobile/Containers/Data/Application/*/Library/Caches/com.pinterest.PINDiskCache.PINCacheShared/MyDaySeverDataHelper%2EallDayTimeline'),
@@ -111,4 +108,3 @@ def get_garmin_heart(files_found, report_folder, seeker, wrap_text, timezone_off
     # (the first column of the table will be used to time-stamp the event)
     tlactivity = 'Garmin_Heart'
     timeline(report_folder, tlactivity, list, data_headers_1)
-
